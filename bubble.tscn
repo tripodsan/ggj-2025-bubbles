@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://ddghupwo8yr6e"]
+
+[ext_resource type="Script" uid="uid://b4w2ncjd8w0lk" path="res://scripts/bubble.gd" id="1_n2mqj"]
+[ext_resource type="Script" uid="uid://bcfduruttg5hi" path="res://scripts/bubble_shape.gd" id="2_y2db8"]
+
+[node name="bubble" type="Node2D"]
+script = ExtResource("1_n2mqj")
+
+[node name="circle" type="Node2D" parent="."]
+script = ExtResource("2_y2db8")
+radius = 25.0
+color = Color(1, 0, 0, 0.733333)
+fill_color = Color(1, 0.578241, 0.517838, 0.733333)
+
+[node name="sub" type="Node2D" parent="."]
+scale = Vector2(0.51, 0.51)
