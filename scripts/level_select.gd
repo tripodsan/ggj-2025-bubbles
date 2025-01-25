@@ -5,7 +5,6 @@ extends MarginContainer
 @onready var levels_grid: GridContainer = %levels_grid
 
 var levels = [
-  preload("res://levels/sandox.tscn"),
   preload("res://levels/level0.tscn"),
   preload("res://levels/level1.tscn"),
   preload("res://levels/level2.tscn"),
@@ -13,7 +12,8 @@ var levels = [
   preload("res://levels/level4.tscn"),
   preload("res://levels/level5.tscn"),
   preload("res://levels/level6.tscn"),
-  preload("res://levels/level7.tscn")
+  preload("res://levels/level7.tscn"),
+  preload("res://levels/level8.tscn")
 ]
 
 func _ready():

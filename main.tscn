@@ -8,7 +8,7 @@
 [ext_resource type="Script" uid="uid://b5p6hh0fe2fsg" path="res://scripts/player.gd" id="2_h2yge"]
 [ext_resource type="Script" uid="uid://bw5nxbswxuehn" path="res://scripts/level_select.gd" id="2_kek77"]
 [ext_resource type="Texture2D" uid="uid://csfi7vtw5w8g4" path="res://assets/tiles.png" id="4_1bvp3"]
-[ext_resource type="PackedScene" uid="uid://bgl3phgbn5ixv" path="res://levels/sandox.tscn" id="5_272bh"]
+[ext_resource type="PackedScene" uid="uid://bgl3phgbn5ixv" path="res://levels/level0.tscn" id="5_272bh"]
 [ext_resource type="Texture2D" uid="uid://ifm146kwhjfc" path="res://assets/shrimpy.png" id="7_5vw27"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_5vw27"]
