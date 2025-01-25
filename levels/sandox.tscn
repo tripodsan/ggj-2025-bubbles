@@ -26,6 +26,7 @@ metadata/_edit_lock_ = true
 
 [node name="sensor" parent="." instance=ExtResource("2_ousop")]
 position = Vector2(120, 56)
+type = 4
 
 [node name="door" parent="." instance=ExtResource("2_vnlfn")]
 position = Vector2(104, 88)
@@ -48,4 +49,3 @@ type = 3
 
 [node name="sensor5" parent="." instance=ExtResource("2_ousop")]
 position = Vector2(264, 120)
-type = 4

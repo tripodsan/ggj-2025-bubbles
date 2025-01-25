@@ -50,6 +50,7 @@ func set_type(t:Type)->void:
   type = t
   var offset:int = 4 if state == State.ENTERING else 0
   $visual.animation = anim_names[t + offset]
+  $visual.stop()
 
 func move_to(v:Vector2):
   pos = v

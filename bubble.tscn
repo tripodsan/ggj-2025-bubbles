@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://ddghupwo8yr6e"]
+[gd_scene load_steps=24 format=3 uid="uid://ddghupwo8yr6e"]
 
 [ext_resource type="Script" uid="uid://b4w2ncjd8w0lk" path="res://scripts/bubble.gd" id="1_n2mqj"]
 [ext_resource type="Texture2D" uid="uid://csfi7vtw5w8g4" path="res://assets/tiles.png" id="2_y2db8"]
@@ -7,17 +7,65 @@
 atlas = ExtResource("2_y2db8")
 region = Rect2(32, 80, 16, 16)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_4a276"]
+atlas = ExtResource("2_y2db8")
+region = Rect2(48, 432, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o6lp5"]
+atlas = ExtResource("2_y2db8")
+region = Rect2(0, 448, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_te3ye"]
+atlas = ExtResource("2_y2db8")
+region = Rect2(16, 448, 16, 16)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_4cx2n"]
 atlas = ExtResource("2_y2db8")
 region = Rect2(16, 80, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h682b"]
+atlas = ExtResource("2_y2db8")
+region = Rect2(0, 432, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dsnxv"]
+atlas = ExtResource("2_y2db8")
+region = Rect2(16, 432, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4hkft"]
+atlas = ExtResource("2_y2db8")
+region = Rect2(32, 432, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_05jx6"]
 atlas = ExtResource("2_y2db8")
 region = Rect2(0, 80, 16, 16)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_gev76"]
+atlas = ExtResource("2_y2db8")
+region = Rect2(16, 416, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dhafo"]
+atlas = ExtResource("2_y2db8")
+region = Rect2(32, 416, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_phga5"]
+atlas = ExtResource("2_y2db8")
+region = Rect2(48, 416, 16, 16)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_y2db8"]
 atlas = ExtResource("2_y2db8")
 region = Rect2(48, 80, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icwen"]
+atlas = ExtResource("2_y2db8")
+region = Rect2(32, 448, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ll77j"]
+atlas = ExtResource("2_y2db8")
+region = Rect2(48, 448, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wr5hj"]
+atlas = ExtResource("2_y2db8")
+region = Rect2(0, 464, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_gr152"]
 atlas = ExtResource("2_y2db8")
@@ -40,34 +88,70 @@ animations = [{
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_1pskq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4a276")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o6lp5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_te3ye")
 }],
 "loop": false,
 "name": &"l_blue",
-"speed": 5.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_4cx2n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h682b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dsnxv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4hkft")
 }],
 "loop": false,
 "name": &"l_green",
-"speed": 5.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_05jx6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gev76")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dhafo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_phga5")
 }],
 "loop": false,
 "name": &"l_red",
-"speed": 5.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_y2db8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_icwen")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ll77j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wr5hj")
 }],
 "loop": false,
 "name": &"l_white",
-"speed": 5.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -110,4 +194,6 @@ script = ExtResource("1_n2mqj")
 
 [node name="visual" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_o6lp5")
-animation = &"l_blue"
+animation = &"l_white"
+frame = 3
+frame_progress = 1.0

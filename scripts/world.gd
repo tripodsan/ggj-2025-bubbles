@@ -48,7 +48,7 @@ func _process(delta:float)->void:
   do_tick()
 
 func do_tick():
-  prints('tick', ticks)
+  #prints('tick', ticks)
   ticks += 1
   # reset
   for b in rocks:
@@ -80,9 +80,15 @@ func do_tick():
 func update_sensors():
   for r in rocks:
     var s:Sensor = get_sensor(r.pos)
-    if s:
+    if s && s.type == Sensor.Type.PLATE:
       s.trigger_node = r
       s.activate(true)
+  for b in bubbles:
+    var s:Sensor = get_sensor(b.pos)
+    if s:
+      if s.type == b.type || s.type == Sensor.Type.SENSOR_WHITE:
+        s.toggle()
+
   for s in sensors:
     if s.active && s.trigger_node && s.trigger_node.pos != s.pos:
       s.activate(false)
@@ -98,8 +104,18 @@ func tick_player():
     if !can_move_rock(next_rock_pos): return
     if get_bubble(next_rock_pos, null): return
     r.set_pos(next_rock_pos)
+  var b:Bubble = get_bubble(pos, null)
+  if b:
+    pickup_bubble(b)
 
   player.pos = pos
+
+func pickup_bubble(b:Bubble):
+  bubbles.erase(b)
+  b.visible = false
+  player.push_bubble(b)
+
+
 
 func is_ground(pos:Vector2i)->bool:
   var c:TileData = floor.get_cell_tile_data(pos)
@@ -133,6 +149,8 @@ func get_next_bubble(pos:Vector2i, ignored:Bubble)->Bubble:
 func tick(b:Bubble):
   if b.processed: return
   b.processed = true
+  if b.pos == player.pos:
+    pickup_bubble(b)
 
   if b.state == Bubble.State.IDLE:
     return
@@ -229,7 +247,12 @@ func create_rock(pos:Vector2i)->Rock:
   return b
 
 func release_bubble()->void:
-  var b:Bubble = create_bubble(player.pos + Global.DIRS[player.dir], Bubble.Type.WHITE)
+  var b:Bubble = player.pop_bubble()
+  if b == null: return
+  #var b:Bubble = create_bubble(player.pos + Global.DIRS[player.dir], Bubble.Type.WHITE)
+  bubbles.append(b)
+  b.visible = true
+  b.set_pos(player.pos + Global.DIRS[player.dir])
   b.dir = player.dir
   b.state = Bubble.State.MOVING
 

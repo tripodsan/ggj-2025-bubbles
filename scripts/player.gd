@@ -9,6 +9,8 @@ var pos:Vector2i: set = set_pos
 ## direction
 var dir:int = 0: set = set_dir
 
+var stack:Array[Bubble] = []
+
 func set_dir(v:int):
   dir = v
   visual.rotation_degrees = dir * 90
@@ -20,3 +22,9 @@ func move_to(v:Vector2):
 func set_pos(v:Vector2):
   pos = v
   transform.origin = Global.grid2cart(v)
+
+func pop_bubble()->Bubble:
+  return stack.pop_back()
+
+func push_bubble(b:Bubble):
+  stack.append(b)

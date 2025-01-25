@@ -4,7 +4,7 @@ extends Cell
 
 @onready var visual: AnimatedSprite2D = $visual
 
-enum Type { PLATE, SENSOR_RED, SENSOR_GREEN, SENSOR_BLUE, SENSOR_WHITE }
+enum Type { SENSOR_WHITE, SENSOR_RED, SENSOR_GREEN, SENSOR_BLUE, PLATE }
 
 signal activation_change(active:bool)
 
@@ -29,6 +29,7 @@ func update_type():
   var str:String = Type.keys()[type].to_lower()
   if active:
     str += '_active'
+  prints('set anim', str)
   visual.animation = str
   visual.stop()
 
@@ -36,3 +37,7 @@ func activate(enable:bool)->void:
   if enable != active:
     active = enable
     activation_change.emit(active)
+
+func toggle()->void:
+  active = !active
+  activation_change.emit(active)
