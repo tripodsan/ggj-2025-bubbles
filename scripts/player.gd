@@ -12,6 +12,7 @@ var dir:int = 0: set = set_dir
 func set_dir(v:int):
   dir = v
   visual.rotation_degrees = dir * 90
+  visual.flip_v = dir != 0
 
 func move_to(v:Vector2):
   pos = v

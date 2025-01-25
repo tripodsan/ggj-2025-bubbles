@@ -1,12 +1,10 @@
 class_name Global
 extends Node
 
-const GRID_DX := 64
-const GRID_DX2 := 32
-const GRID_DY := 64
-const GRID_DY2 := 32
-const GRID_OX := 384
-const GRID_OY := 240
+const GRID_DX := 16
+const GRID_DX2 := 8
+const GRID_DY := 16
+const GRID_DY2 := 8
 
 const GRID_SIZE := Vector2(GRID_DX, GRID_DY)
 

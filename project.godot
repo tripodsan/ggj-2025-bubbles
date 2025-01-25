@@ -17,13 +17,13 @@ config/features=PackedStringArray("4.4", "Forward Plus")
 boot_splash/bg_color=Color(0.12549, 0.282353, 0.501961, 1)
 boot_splash/image="uid://crqw8vb7k34nl"
 boot_splash/fullsize=false
-config/icon="uid://crqw8vb7k34nl"
+config/icon="uid://dp7p48r2pylsp"
 boot_splash/minimum_display_time=100
 
 [display]
 
-window/size/viewport_width=960
-window/size/viewport_height=540
+window/size/viewport_width=320
+window/size/viewport_height=180
 window/size/window_width_override=1920
 window/size/window_height_override=1080
 window/stretch/mode="canvas_items"
