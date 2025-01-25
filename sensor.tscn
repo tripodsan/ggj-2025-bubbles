@@ -1,0 +1,134 @@
+[gd_scene load_steps=14 format=3 uid="uid://bwlmpoxqspknm"]
+
+[ext_resource type="Script" uid="uid://bk5qbstyxgyfr" path="res://scripts/sensor.gd" id="1_4bfv1"]
+[ext_resource type="Texture2D" uid="uid://csfi7vtw5w8g4" path="res://assets/tiles.png" id="2_n4bpv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n4bpv"]
+atlas = ExtResource("2_n4bpv")
+region = Rect2(16, 128, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4bfv1"]
+atlas = ExtResource("2_n4bpv")
+region = Rect2(32, 128, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w6ewo"]
+atlas = ExtResource("2_n4bpv")
+region = Rect2(32, 192, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a8n0a"]
+atlas = ExtResource("2_n4bpv")
+region = Rect2(32, 208, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4loke"]
+atlas = ExtResource("2_n4bpv")
+region = Rect2(16, 192, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oqqjf"]
+atlas = ExtResource("2_n4bpv")
+region = Rect2(16, 208, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kajyl"]
+atlas = ExtResource("2_n4bpv")
+region = Rect2(0, 192, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ean6a"]
+atlas = ExtResource("2_n4bpv")
+region = Rect2(0, 208, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ixi7q"]
+atlas = ExtResource("2_n4bpv")
+region = Rect2(48, 192, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_plax7"]
+atlas = ExtResource("2_n4bpv")
+region = Rect2(48, 208, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_w6ewo"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n4bpv")
+}],
+"loop": false,
+"name": &"plate",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4bfv1")
+}],
+"loop": false,
+"name": &"plate_active",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w6ewo")
+}],
+"loop": false,
+"name": &"sensor_blue",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a8n0a")
+}],
+"loop": false,
+"name": &"sensor_blue_active",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4loke")
+}],
+"loop": false,
+"name": &"sensor_green",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oqqjf")
+}],
+"loop": false,
+"name": &"sensor_green_active",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kajyl")
+}],
+"loop": false,
+"name": &"sensor_red",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ean6a")
+}],
+"loop": false,
+"name": &"sensor_red_active",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ixi7q")
+}],
+"loop": false,
+"name": &"sensor_white",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_plax7")
+}],
+"loop": false,
+"name": &"sensor_white_active",
+"speed": 5.0
+}]
+
+[node name="sensor" type="Node2D" groups=["sensors"]]
+script = ExtResource("1_4bfv1")
+
+[node name="visual" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_w6ewo")
+animation = &"plate"

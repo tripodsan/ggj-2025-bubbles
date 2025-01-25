@@ -40,6 +40,7 @@ func reset():
   next_pos = pos
   next_dir = dir
   next_state = state
+  next_children.clear()
 
 func set_dir(v:int):
   dir = v
@@ -63,12 +64,12 @@ func apply(speed:float):
   pos = next_pos
   dir = next_dir
   state = next_state
-  prints(State.keys()[state])
+  #prints(State.keys()[state])
   visual.position = Vector2.ZERO if state == State.ENTERING else Global.DIRS[dir] * 1.0
   if tween: tween.stop()
   if state == State.MOVING:
     tween = create_tween()
-    tween.tween_property(self, 'position', Global.grid2cart(pos), speed - 0.2)
+    tween.tween_property(self, 'position', Global.grid2cart(pos), speed - 0.1)
   elif state == State.ABSORBING:
     for b in next_children:
       b.reparent(sub, true)

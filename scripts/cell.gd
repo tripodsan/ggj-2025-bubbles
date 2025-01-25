@@ -14,6 +14,9 @@ var dir:int = 0
 
 var next_dir:int = 0
 
+func _ready() -> void:
+  pos = Global.cart2grid(position)
+
 func reset():
   processed = false
   next_pos = pos

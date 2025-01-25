@@ -1,0 +1,80 @@
+[gd_scene load_steps=12 format=3 uid="uid://nlu0jf4fyhas"]
+
+[ext_resource type="Script" path="res://scripts/door.gd" id="1_v6xrn"]
+[ext_resource type="Texture2D" uid="uid://csfi7vtw5w8g4" path="res://assets/tiles.png" id="2_0phs7"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v6xrn"]
+atlas = ExtResource("2_0phs7")
+region = Rect2(48, 144, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0phs7"]
+atlas = ExtResource("2_0phs7")
+region = Rect2(32, 144, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_50cdl"]
+atlas = ExtResource("2_0phs7")
+region = Rect2(16, 144, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y5njw"]
+atlas = ExtResource("2_0phs7")
+region = Rect2(0, 144, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4xadh"]
+atlas = ExtResource("2_0phs7")
+region = Rect2(16, 400, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6hwww"]
+atlas = ExtResource("2_0phs7")
+region = Rect2(32, 400, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v1oua"]
+atlas = ExtResource("2_0phs7")
+region = Rect2(48, 400, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ptf7r"]
+atlas = ExtResource("2_0phs7")
+region = Rect2(0, 416, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_4xadh"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v6xrn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0phs7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_50cdl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y5njw")
+}],
+"loop": false,
+"name": &"horz",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4xadh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6hwww")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v1oua")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ptf7r")
+}],
+"loop": false,
+"name": &"vert",
+"speed": 5.0
+}]
+
+[node name="door" type="Node2D" groups=["doors"]]
+script = ExtResource("1_v6xrn")
+
+[node name="visual" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_4xadh")
+animation = &"horz"

@@ -28,6 +28,11 @@ window/size/window_width_override=1920
 window/size/window_height_override=1080
 window/stretch/mode="canvas_items"
 
+[global_group]
+
+sensors=""
+doors=""
+
 [input]
 
 move_up={
@@ -62,4 +67,5 @@ shoot={
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 environment/defaults/default_clear_color=Color(0.12549, 0.282353, 0.501961, 1)

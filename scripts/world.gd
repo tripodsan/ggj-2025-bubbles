@@ -10,13 +10,21 @@ const ROCK = preload('res://rock.tscn')
 @onready var floor: TileMapLayer = $level/floor
 @onready var walls: TileMapLayer = $level/walls
 
-var tick_speed:float = 0.8
+var tick_speed:float = 0.5
 
 var bubbles:Array[Bubble] = []
+
+var rocks:Array[Rock] = []
+
+var sensors:Array[Sensor] = []
+
+var doors:Array[Door] = []
 
 var time:float = 0
 
 var ticks:int = 0
+
+var pending_move:bool = false
 
 func _ready():
   init_level()
@@ -43,8 +51,14 @@ func do_tick():
   prints('tick', ticks)
   ticks += 1
   # reset
+  for b in rocks:
+    b.reset()
   for b in bubbles:
     b.reset()
+
+  #if pending_move:
+    #tick_player()
+    #pending_move = false
 
   # calculate next state
   for b in bubbles:
@@ -55,10 +69,60 @@ func do_tick():
     b.apply(tick_speed)
     if b.state == Bubble.State.ENTERING:
       bubbles.erase(b)
+  for r in rocks:
+    r.apply(tick_speed)
+    if !is_ground(r.pos):
+      rocks.erase(r)
+      r.queue_free()
+
+  update_sensors()
+
+func update_sensors():
+  for r in rocks:
+    var s:Sensor = get_sensor(r.pos)
+    if s:
+      s.trigger_node = r
+      s.activate(true)
+  for s in sensors:
+    if s.active && s.trigger_node && s.trigger_node.pos != s.pos:
+      s.activate(false)
+      s.trigger_node = null
+
+func tick_player():
+  var pos:Vector2 = player.pos + Global.DIRS[player.dir]
+  if walls.get_cell_tile_data(pos) != null: return
+  if !is_ground(pos): return
+  var r:Rock = get_rock(pos)
+  if r != null:
+    var next_rock_pos:Vector2i = r.pos + Global.DIRS[player.dir]
+    if !can_move_rock(next_rock_pos): return
+    if get_bubble(next_rock_pos, null): return
+    r.set_pos(next_rock_pos)
+
+  player.pos = pos
+
+func is_ground(pos:Vector2i)->bool:
+  var c:TileData = floor.get_cell_tile_data(pos)
+  if c == null: return false
+  return c.get_custom_data("type") == &"ground"
+
+func get_sensor(pos:Vector2i)->Sensor:
+  for s:Sensor in sensors:
+    if s.pos == pos: return s
+  return null
 
 func get_bubble(pos:Vector2i, ignored:Bubble)->Bubble:
   for b:Bubble in bubbles:
     if b != ignored && b.pos == pos: return b
+  return null
+
+func can_move_rock(pos:Vector2i):
+  if walls.get_cell_tile_data(pos) != null: return
+  return true
+
+func get_rock(pos:Vector2i)->Rock:
+  for r:Rock in rocks:
+    if r.pos == pos: return r
   return null
 
 func get_next_bubble(pos:Vector2i, ignored:Bubble)->Bubble:
@@ -100,6 +164,17 @@ func tick(b:Bubble):
       # bounce on wall
       b.turn()
       return
+    var r:Rock = get_rock(next_pos)
+    if r != null:
+      var next_rock_pos:Vector2i = r.pos + Global.DIRS[dir]
+      if can_move_rock(next_rock_pos):
+        r.next_dir = dir
+        r.next_pos = next_rock_pos
+        b.next_state = Bubble.State.IDLE
+      else:
+        b.turn()
+      return
+
     c = get_bubble(next_pos, b)
     if c == null:
       b.next_pos = next_pos
@@ -114,22 +189,24 @@ func tick(b:Bubble):
     # check if it can merge
     var p:Bubble = b.can_merge(c)
     if p == null:
-      # bounce on bubble
-      b.turn()
+      if c.state == Bubble.State.MOVING:
+        # bounce
+        b.turn()
+        c.turn()
+      else:
+        # transfer
+        b.next_state = Bubble.State.IDLE
+        c.next_state = Bubble.State.MOVING
+        c.next_dir = dir
       return
 
     # continue and check in next tick
     b.next_pos = next_pos
 
-
 func player_move(dir:int):
   player.dir = dir
-  if can_move(dir):
-    player.pos += Global.DIRS[dir]
-
-func can_move(dir)->bool:
-  var pos:Vector2 = player.pos + Global.DIRS[dir]
-  return walls.get_cell_tile_data(pos) == null
+  pending_move = true
+  tick_player()
 
 func get_type(pos:Vector2i)->StringName:
   var d:TileData = walls.get_cell_tile_data(pos)
@@ -147,6 +224,7 @@ func create_bubble(pos:Vector2i, type:Bubble.Type)->Bubble:
 func create_rock(pos:Vector2i)->Rock:
   var b:Rock = ROCK.instantiate()
   b.set_pos(pos)
+  rocks.append(b)
   objects.add_child(b)
   return b
 
@@ -157,6 +235,10 @@ func release_bubble()->void:
 
 func init_level():
   ## objects and start position from walls
+  bubbles.clear()
+  rocks.clear()
+  sensors.clear()
+  doors.clear()
   for c:Vector2i in walls.get_used_cells():
     var d:TileData = walls.get_cell_tile_data(c)
     var type:StringName = d.get_custom_data("type")
@@ -170,3 +252,7 @@ func init_level():
     elif type == &"rock":
       create_rock(c)
       walls.set_cell(c, -1)
+  for n:Node2D in get_tree().get_nodes_in_group(&"sensors"):
+    sensors.append(n)
+  for n:Node2D in get_tree().get_nodes_in_group(&"doors"):
+    doors.append(n)
