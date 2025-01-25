@@ -1,5 +1,5 @@
 class_name Bubble
-extends Node2D
+extends Cell
 
 @onready var visual: AnimatedSprite2D = $visual
 
@@ -18,25 +18,13 @@ var anim_names = [
   "s_blue"
 ]
 
-var processed:bool
-
-## position in grid
-var pos:Vector2i
-
 var type:Type = Type.WHITE
-
-var next_pos:Vector2i
 
 var state:State = State.IDLE
 
 var next_state:State = State.IDLE
 
 var next_children:Array[Bubble] = []
-
-## direction
-var dir:int = 0
-
-var next_dir:int = 0
 
 var max_children:int = 1
 
@@ -76,7 +64,7 @@ func apply(speed:float):
   dir = next_dir
   state = next_state
   prints(State.keys()[state])
-  #visual.position = Global.DIRS[dir] * 2.0
+  visual.position = Vector2.ZERO if state == State.ENTERING else Global.DIRS[dir] * 1.0
   if tween: tween.stop()
   if state == State.MOVING:
     tween = create_tween()
@@ -94,11 +82,6 @@ func apply(speed:float):
 func turn()->void:
   next_dir = (dir + 2) % 4
   next_state = State.TURNING
-
-func set_pos(v:Vector2):
-  pos = v
-  next_pos = v
-  position = Global.grid2cart(v)
 
 func is_stationary()->bool:
   return state == State.IDLE or state == State.TURNING

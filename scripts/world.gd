@@ -2,6 +2,7 @@ class_name World
 extends Node2D
 
 const BUBBLE = preload('res://bubble.tscn')
+const ROCK = preload('res://rock.tscn')
 
 @onready var player: Player = %player
 @onready var objects: Node2D = %objects
@@ -143,6 +144,12 @@ func create_bubble(pos:Vector2i, type:Bubble.Type)->Bubble:
   objects.add_child(b)
   return b
 
+func create_rock(pos:Vector2i)->Rock:
+  var b:Rock = ROCK.instantiate()
+  b.set_pos(pos)
+  objects.add_child(b)
+  return b
+
 func release_bubble()->void:
   var b:Bubble = create_bubble(player.pos + Global.DIRS[player.dir], Bubble.Type.WHITE)
   b.dir = player.dir
@@ -159,4 +166,7 @@ func init_level():
       walls.set_cell(c, -1)
     elif type == &"bubble":
       create_bubble(c, color)
+      walls.set_cell(c, -1)
+    elif type == &"rock":
+      create_rock(c)
       walls.set_cell(c, -1)

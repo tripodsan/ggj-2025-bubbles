@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://btrmgd1ahliar"]
+
+[ext_resource type="Texture2D" uid="uid://csfi7vtw5w8g4" path="res://assets/tiles.png" id="1_68h2w"]
+[ext_resource type="Script" uid="uid://dxpkpib5if5kk" path="res://scripts/rock.gd" id="1_o0qsl"]
+
+[node name="rock" type="Node2D"]
+script = ExtResource("1_o0qsl")
+
+[node name="visual" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_68h2w")
+region_enabled = true
+region_rect = Rect2(0, 128, 16, 16)
