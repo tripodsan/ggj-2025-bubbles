@@ -18,6 +18,13 @@ var anim_names = [
   "s_blue"
 ]
 
+var turn_names = [
+  "b_white_e",
+  "b_white_s",
+  "b_white_w",
+  "b_white_n",
+]
+
 var type:Type = Type.WHITE
 
 var state:State = State.IDLE
@@ -49,8 +56,9 @@ func set_dir(v:int):
 func set_type(t:Type)->void:
   type = t
   var offset:int = 4 if state == State.ENTERING else 0
-  $visual.animation = anim_names[t + offset]
-  $visual.stop()
+  if visual:
+    visual.animation = anim_names[t + offset]
+    visual.stop()
 
 func move_to(v:Vector2):
   pos = v
@@ -66,17 +74,22 @@ func apply(speed:float):
   dir = next_dir
   state = next_state
   #prints(State.keys()[state])
-  visual.position = Vector2.ZERO if state == State.ENTERING else Global.DIRS[dir] * 1.0
+  #visual.position = Vector2.ZERO if state == State.ENTERING else Global.DIRS[dir] * 1.0
   if tween: tween.stop()
   if state == State.MOVING:
     tween = create_tween()
-    tween.tween_property(self, 'position', Global.grid2cart(pos), speed - 0.1)
+    tween.tween_property(self, 'position', Global.grid2cart(pos), speed)
   elif state == State.ABSORBING:
     for b in next_children:
       b.reparent(sub, true)
       b.position = Vector2.ZERO
       b.scale = Vector2.ONE
   elif state == State.ENTERING:
+    set_type(type)
+
+  if state == State.TURNING:
+    visual.play(turn_names[(dir + 2) % 4], 1.5)
+  else:
     set_type(type)
 
 

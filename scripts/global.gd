@@ -1,4 +1,3 @@
-class_name Global
 extends Node
 
 const GRID_DX := 16
@@ -22,3 +21,5 @@ static func grid2cart(pos:Vector2i)->Vector2:
 
 static func cart2grid(pos:Vector2)->Vector2i:
   return Vector2i((pos.x - GRID_DX2) / GRID_DX, (pos.y - GRID_DY2) / GRID_DY)
+
+signal select_level(nr:int, scn:PackedScene)

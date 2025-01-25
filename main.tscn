@@ -1,13 +1,19 @@
-[gd_scene load_steps=11 format=3 uid="uid://b6pn56m58b44l"]
+[gd_scene load_steps=14 format=3 uid="uid://b6pn56m58b44l"]
 
+[ext_resource type="Script" uid="uid://4xixxswrl7q5" path="res://scripts/game.gd" id="1_4c57u"]
 [ext_resource type="Texture2D" uid="uid://dx7ifyggj34ib" path="res://assets/bubble_small.png" id="1_5vw27"]
 [ext_resource type="Script" uid="uid://bkkvxs0bki7q3" path="res://scripts/world.gd" id="1_h2yge"]
 [ext_resource type="Texture2D" uid="uid://bcnhw27shwvvg" path="res://assets/titlescreen.png" id="1_lquwl"]
 [ext_resource type="Theme" uid="uid://nis2x43f0qmt" path="res://title-theme.tres" id="2_272bh"]
 [ext_resource type="Script" uid="uid://b5p6hh0fe2fsg" path="res://scripts/player.gd" id="2_h2yge"]
+[ext_resource type="Script" uid="uid://bw5nxbswxuehn" path="res://scripts/level_select.gd" id="2_kek77"]
 [ext_resource type="Texture2D" uid="uid://csfi7vtw5w8g4" path="res://assets/tiles.png" id="4_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://bgl3phgbn5ixv" path="res://levels/sandox.tscn" id="5_272bh"]
 [ext_resource type="Texture2D" uid="uid://ifm146kwhjfc" path="res://assets/shrimpy.png" id="7_5vw27"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_5vw27"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_272bh"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kek77"]
 particle_flag_disable_z = true
@@ -25,13 +31,11 @@ color = Color(1, 1, 1, 0.337255)
 hue_variation_min = -2.23517e-08
 hue_variation_max = 0.08
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_272bh"]
-
-[node name="root" type="Node2D"]
+[node name="game" type="Node2D"]
 texture_filter = 1
+script = ExtResource("1_4c57u")
 
 [node name="gui" type="Control" parent="."]
-visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 320.0
@@ -39,16 +43,70 @@ offset_bottom = 180.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="bubbles" type="GPUParticles2D" parent="gui"]
-position = Vector2(160, 180)
-amount = 20
-texture = ExtResource("1_5vw27")
-lifetime = 2.85
-process_material = SubResource("ParticleProcessMaterial_kek77")
+[node name="level_select" type="MarginContainer" parent="gui"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_272bh")
+theme_override_constants/margin_top = 10
+script = ExtResource("2_kek77")
 
-[node name="Shrimpy" type="Sprite2D" parent="gui"]
-position = Vector2(53, 143)
-texture = ExtResource("7_5vw27")
+[node name="VBoxContainer" type="VBoxContainer" parent="gui/level_select"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="gui/level_select/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "SELECT LEVEL"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="gui/level_select/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+theme_override_styles/separator = SubResource("StyleBoxEmpty_5vw27")
+
+[node name="levels_grid" type="GridContainer" parent="gui/level_select/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 4
+
+[node name="1" type="Button" parent="gui/level_select/VBoxContainer/levels_grid"]
+layout_mode = 2
+text = "1"
+
+[node name="2" type="Button" parent="gui/level_select/VBoxContainer/levels_grid"]
+layout_mode = 2
+text = "2"
+
+[node name="3" type="Button" parent="gui/level_select/VBoxContainer/levels_grid"]
+layout_mode = 2
+text = "3"
+
+[node name="4" type="Button" parent="gui/level_select/VBoxContainer/levels_grid"]
+layout_mode = 2
+text = "4"
+
+[node name="5" type="Button" parent="gui/level_select/VBoxContainer/levels_grid"]
+layout_mode = 2
+text = "5"
+
+[node name="6" type="Button" parent="gui/level_select/VBoxContainer/levels_grid"]
+layout_mode = 2
+text = "6"
+
+[node name="7" type="Button" parent="gui/level_select/VBoxContainer/levels_grid"]
+layout_mode = 2
+text = "7"
+
+[node name="8" type="Button" parent="gui/level_select/VBoxContainer/levels_grid"]
+layout_mode = 2
+text = "8"
 
 [node name="title" type="MarginContainer" parent="gui"]
 layout_mode = 1
@@ -57,6 +115,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="Shrimpy" type="Sprite2D" parent="gui/title"]
+position = Vector2(53, 143)
+texture = ExtResource("7_5vw27")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="gui/title"]
 layout_mode = 2
@@ -78,15 +140,23 @@ layout_mode = 2
 theme_override_constants/separation = 11
 theme_override_styles/separator = SubResource("StyleBoxEmpty_272bh")
 
-[node name="play" type="Label" parent="gui/title/VBoxContainer"]
+[node name="play" type="Button" parent="gui/title/VBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
 theme = ExtResource("2_272bh")
 theme_override_font_sizes/font_size = 17
 text = "PLAY"
-horizontal_alignment = 1
+
+[node name="bubbles" type="GPUParticles2D" parent="gui/title"]
+position = Vector2(160, 180)
+amount = 20
+texture = ExtResource("1_5vw27")
+lifetime = 2.85
+process_material = SubResource("ParticleProcessMaterial_kek77")
 
 [node name="world" type="Node2D" parent="."]
 unique_name_in_owner = true
+visible = false
 script = ExtResource("1_h2yge")
 
 [node name="level" parent="world" instance=ExtResource("5_272bh")]
@@ -99,8 +169,5 @@ script = ExtResource("2_h2yge")
 texture = ExtResource("4_1bvp3")
 region_enabled = true
 region_rect = Rect2(48, 160, 16, 16)
-
-[node name="objects" type="Node2D" parent="world"]
-unique_name_in_owner = true
 
 [editable path="world/level"]

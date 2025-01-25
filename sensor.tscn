@@ -131,4 +131,4 @@ script = ExtResource("1_4bfv1")
 
 [node name="visual" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_w6ewo")
-animation = &"plate"
+animation = &"sensor_white"

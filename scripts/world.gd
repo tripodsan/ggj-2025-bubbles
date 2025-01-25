@@ -5,7 +5,8 @@ const BUBBLE = preload('res://bubble.tscn')
 const ROCK = preload('res://rock.tscn')
 
 @onready var player: Player = %player
-@onready var objects: Node2D = %objects
+
+var objects: Node2D
 
 @onready var floor: TileMapLayer = $level/floor
 @onready var walls: TileMapLayer = $level/walls
@@ -26,8 +27,11 @@ var ticks:int = 0
 
 var pending_move:bool = false
 
+var current_level_scn:PackedScene
+
 func _ready():
-  init_level()
+  pass
+  #init_level()
 
 func _unhandled_input(event:InputEvent)->void:
   if event.is_action_pressed('move_up'):
@@ -40,6 +44,18 @@ func _unhandled_input(event:InputEvent)->void:
     player_move(Global.DIR.LEFT)
   if event.is_action_pressed('shoot'):
     release_bubble()
+
+func load_level(nr:int, scn:PackedScene):
+  current_level_scn = scn
+  var level:Node2D = get_node('level')
+  remove_child(level)
+  level.queue_free()
+  level = scn.instantiate()
+  add_child(level)
+  move_child(level, 0)
+  objects = Node2D.new()
+  level.add_child(objects)
+  init_level()
 
 func _process(delta:float)->void:
   time += delta
@@ -257,6 +273,8 @@ func release_bubble()->void:
   b.state = Bubble.State.MOVING
 
 func init_level():
+  walls = get_node('level/walls')
+  floor = get_node('level/floor')
   ## objects and start position from walls
   bubbles.clear()
   rocks.clear()

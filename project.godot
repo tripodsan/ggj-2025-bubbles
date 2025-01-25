@@ -20,6 +20,10 @@ boot_splash/fullsize=false
 config/icon="uid://dp7p48r2pylsp"
 boot_splash/minimum_display_time=100
 
+[autoload]
+
+Global="*res://scripts/global.gd"
+
 [display]
 
 window/size/viewport_width=320
