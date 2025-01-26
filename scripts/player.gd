@@ -26,5 +26,8 @@ func set_pos(v:Vector2):
 func pop_bubble()->Bubble:
   return stack.pop_back()
 
-func push_bubble(b:Bubble):
-  stack.append(b)
+func push_bubble(b:Bubble)->bool:
+  if stack.is_empty():
+    stack.append(b)
+    return true
+  return false

@@ -23,6 +23,18 @@ var turn_names = [
   "b_white_s",
   "b_white_w",
   "b_white_n",
+  "b_red_e",
+  "b_red_s",
+  "b_red_w",
+  "b_red_n",
+  "b_green_e",
+  "b_green_s",
+  "b_green_w",
+  "b_green_n",
+  "b_blue_e",
+  "b_blue_s",
+  "b_blue_w",
+  "b_blue_n",
 ]
 
 var type:Type = Type.WHITE
@@ -88,7 +100,7 @@ func apply(speed:float):
     set_type(type)
 
   if state == State.TURNING:
-    visual.play(turn_names[(dir + 2) % 4], 1.5)
+    visual.play(turn_names[(dir + 2) % 4 + type * 4], 1.5)
   else:
     set_type(type)
 

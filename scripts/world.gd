@@ -129,11 +129,10 @@ func tick_player(dir:int):
   player.pos = pos
 
 func pickup_bubble(b:Bubble):
-  bubbles.erase(b)
-  b.visible = false
-  player.push_bubble(b)
-
-
+  if player.push_bubble(b):
+    bubbles.erase(b)
+    b.visible = false
+    player.push_bubble(b)
 
 func is_ground(pos:Vector2i)->bool:
   var c:TileData = floor.get_cell_tile_data(pos)
@@ -186,6 +185,10 @@ func tick(b:Bubble):
     b.next_state = Bubble.State.MOVING
 
   if b.state == Bubble.State.MOVING:
+    # check if the bubble is on a spike
+    if get_type(b.pos) == &"spike":
+      b.next_state == Bubble.State.BURSTING
+      return
     # check if another bubble is on this pos
     var c:Bubble = get_bubble(b.pos, b)
     if c:
@@ -202,6 +205,11 @@ func tick(b:Bubble):
 
     var dir:int = b.dir
     var next_pos:Vector2i = b.pos + Global.DIRS[dir]
+    var type:= get_type(next_pos)
+    if type == &"spike":
+      # handle bursting in the next tick
+      b.next_pos = next_pos
+      return
     if walls.get_cell_tile_data(next_pos) != null || is_closed_door(next_pos):
       # bounce on wall
       b.turn()
@@ -251,8 +259,14 @@ func player_move(dir:int):
 
 func get_type(pos:Vector2i)->StringName:
   var d:TileData = walls.get_cell_tile_data(pos)
-  if !d: return ""
-  return d.get_custom_data("type")
+  if !d: return &""
+  var type:StringName = d.get_custom_data("type")
+  return &"wall" if type == &"" else type
+
+func get_color_type(pos:Vector2i)->StringName:
+  var d:TileData = walls.get_cell_tile_data(pos)
+  if !d: return &""
+  return d.get_custom_data("color")
 
 func create_bubble(pos:Vector2i, type:Bubble.Type)->Bubble:
   var b:Bubble = BUBBLE.instantiate()
