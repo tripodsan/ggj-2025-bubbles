@@ -23,3 +23,4 @@ static func cart2grid(pos:Vector2)->Vector2i:
   return Vector2i((pos.x - GRID_DX2) / GRID_DX, (pos.y - GRID_DY2) / GRID_DY)
 
 signal select_level(nr:int)
+signal level_complete()

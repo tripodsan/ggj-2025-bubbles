@@ -5,7 +5,7 @@ extends MarginContainer
 @onready var levels_grid: GridContainer = %levels_grid
 
 var levels = [
-  preload("res://levels/level0.tscn"),
+  #preload("res://levels/level0.tscn"),
   preload("res://levels/level1.tscn"),
   preload("res://levels/level2.tscn"),
   preload("res://levels/level3.tscn"),
@@ -29,7 +29,7 @@ func _ready():
     else:
       template = n
       n.hide()
-  var i:int = 0
+  var i:int = 1
   for lev in levels:
     var btn:Button = template.duplicate()
     btn.visible = true

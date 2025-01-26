@@ -117,8 +117,20 @@ func update_sensors():
       s.activate(false)
       s.trigger_node = null
 
+func goal_reached():
+  await get_tree().create_timer(0.5).timeout
+  Global.level_complete.emit()
+
+
 func tick_player(dir:int):
   var pos:Vector2 = player.pos + Global.DIRS[dir]
+  var type:StringName = get_type(pos)
+  if type == &"goal":
+    walls.set_cell(pos, -1)
+    player.dir = dir
+    player.pos = pos
+    goal_reached()
+
   if walls.get_cell_tile_data(pos) != null: return
   if !is_ground(pos): return
   if is_closed_door(pos): return

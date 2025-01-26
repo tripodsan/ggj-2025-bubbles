@@ -33,6 +33,7 @@ hue_variation_min = -2.23517e-08
 hue_variation_max = 0.08
 
 [node name="game" type="Node2D"]
+process_mode = 3
 texture_filter = 1
 script = ExtResource("1_4c57u")
 
@@ -127,7 +128,6 @@ layout_mode = 2
 text = "12"
 
 [node name="title" type="MarginContainer" parent="gui"]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -174,12 +174,14 @@ lifetime = 2.85
 process_material = SubResource("ParticleProcessMaterial_kek77")
 
 [node name="win" type="MarginContainer" parent="gui"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_top = 9
 
 [node name="VBoxContainer" type="VBoxContainer" parent="gui/win"]
 layout_mode = 2
@@ -192,13 +194,13 @@ text = "SHRIMPALICIOUS"
 horizontal_alignment = 1
 
 [node name="Shrimpy" type="Sprite2D" parent="gui/win/VBoxContainer"]
-position = Vector2(160, 83)
+position = Vector2(161, 80)
 scale = Vector2(1.5, 1.5)
 texture = ExtResource("7_efxa6")
 
 [node name="HSeparator" type="HSeparator" parent="gui/win/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 100
+theme_override_constants/separation = 91
 theme_override_styles/separator = SubResource("StyleBoxEmpty_272bh")
 
 [node name="nextlevel" type="Button" parent="gui/win/VBoxContainer"]
@@ -215,8 +217,56 @@ texture = ExtResource("1_5vw27")
 lifetime = 2.85
 process_material = SubResource("ParticleProcessMaterial_kek77")
 
+[node name="pause" type="MarginContainer" parent="gui"]
+process_mode = 3
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_top = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="gui/pause"]
+layout_mode = 2
+
+[node name="label" type="Label" parent="gui/pause/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("2_272bh")
+theme_override_font_sizes/font_size = 15
+text = "GAME PAUSED"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="gui/pause/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+theme_override_styles/separator = SubResource("StyleBoxEmpty_272bh")
+
+[node name="restart" type="Button" parent="gui/pause/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme = ExtResource("2_272bh")
+theme_override_font_sizes/font_size = 13
+text = "RESTART"
+
+[node name="cont" type="Button" parent="gui/pause/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme = ExtResource("2_272bh")
+theme_override_font_sizes/font_size = 13
+text = "CONTINUE"
+
+[node name="quit" type="Button" parent="gui/pause/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme = ExtResource("2_272bh")
+theme_override_font_sizes/font_size = 13
+text = "QUIT LEVEL"
+
 [node name="world" type="Node2D" parent="."]
 unique_name_in_owner = true
+process_mode = 1
 visible = false
 script = ExtResource("1_h2yge")
 
@@ -233,5 +283,8 @@ region_rect = Rect2(48, 160, 16, 16)
 
 [connection signal="pressed" from="gui/title/VBoxContainer/play" to="." method="_on_play_pressed"]
 [connection signal="pressed" from="gui/win/VBoxContainer/nextlevel" to="." method="_on_nextlevel_pressed"]
+[connection signal="pressed" from="gui/pause/VBoxContainer/restart" to="." method="_on_restart_pressed"]
+[connection signal="pressed" from="gui/pause/VBoxContainer/cont" to="." method="_on_cont_pressed"]
+[connection signal="pressed" from="gui/pause/VBoxContainer/quit" to="." method="_on_quit_level_pressed"]
 
 [editable path="world/level"]
