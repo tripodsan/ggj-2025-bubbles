@@ -75,7 +75,6 @@ func _unhandled_input(event: InputEvent) -> void:
     get_viewport().set_input_as_handled()
     _on_restart_pressed()
 
-
 func _on_play_pressed() -> void:
   show_level_select()
 

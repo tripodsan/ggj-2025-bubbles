@@ -11,7 +11,7 @@ var objects: Node2D
 @onready var floor: TileMapLayer = $level/floor
 @onready var walls: TileMapLayer = $level/walls
 
-var tick_speed:float = 0.5
+var tick_speed:float = 0.4
 
 var bubbles:Array[Bubble] = []
 
@@ -78,11 +78,6 @@ func do_tick():
     b.reset()
   for b in bubbles:
     b.reset()
-
-  #if pending_move:
-    #tick_player()
-    #pending_move = false
-
   # calculate next state
   for b in bubbles:
     tick(b)
@@ -176,6 +171,7 @@ func get_bubble(pos:Vector2i, ignored:Bubble)->Bubble:
 func can_move_rock(pos:Vector2i):
   if walls.get_cell_tile_data(pos) != null: return
   if is_closed_door(pos): return
+  if get_rock(pos): return
   return true
 
 func get_rock(pos:Vector2i)->Rock:
@@ -356,12 +352,17 @@ func create_rock(pos:Vector2i)->Rock:
   return b
 
 func release_bubble()->void:
+  var pos = player.pos + Global.DIRS[player.dir]
+  var type:StringName = get_type(pos)
+  if type != &"" and type != &"spike": return
+  if get_rock(pos): return
+  if is_closed_door(pos): return
+
   var b:Bubble = player.pop_bubble()
   if b == null: return
-  #var b:Bubble = create_bubble(player.pos + Global.DIRS[player.dir], Bubble.Type.WHITE)
   bubbles.append(b)
   b.visible = true
-  b.set_pos(player.pos + Global.DIRS[player.dir])
+  b.set_pos(pos)
   b.dir = player.dir
   b.state = Bubble.State.MOVING
 

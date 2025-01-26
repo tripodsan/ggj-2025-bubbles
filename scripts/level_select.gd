@@ -21,6 +21,8 @@ var levels = [
   preload("res://levels/level13.tscn")
 ]
 
+const MIN_LEVEL:int = 0
+
 func _ready():
   var template:Button
   for n in levels_grid.get_children():
@@ -29,7 +31,7 @@ func _ready():
     else:
       template = n
       n.hide()
-  for i in range(1, levels.size()):
+  for i in range(MIN_LEVEL, levels.size()):
     var btn:Button = template.duplicate()
     btn.visible = true
     btn.text = str(i)
