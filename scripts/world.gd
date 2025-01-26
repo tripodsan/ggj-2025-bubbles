@@ -190,10 +190,8 @@ func burst_bubble(b:Bubble)->void:
   if b.left == null: return
   var l = b.left
   l.processed = false
-  l.state = Bubble.State.MOVING
-  l.next_state = Bubble.State.MOVING
   l.reparent(objects)
-  l.scale = Vector2.ONE
+  l.leave()
   l.set_pos(b.pos)
   l.immune = b.pos
   bubbles.append(l)
@@ -205,10 +203,8 @@ func burst_bubble(b:Bubble)->void:
   else:
     var r = b.right
     r.processed = false
-    r.state = Bubble.State.MOVING
-    r.next_state = Bubble.State.MOVING
     r.reparent(objects)
-    r.scale = Vector2.ONE
+    r.leave()
     r.set_pos(b.pos)
     r.immune = b.pos
     bubbles.append(r)
@@ -219,6 +215,18 @@ func burst_bubble(b:Bubble)->void:
       l.next_dir = l.dir
       r.dir = (b.dir + 1) % 4
       r.next_dir = r.dir
+    else:
+      if (tick_dir + b.dir) % 4 < 2:
+        l.dir = b.dir
+        l.next_dir = l.dir
+        r.dir = tick_dir
+        r.next_dir = r.dir
+      else:
+        r.dir = b.dir
+        r.next_dir = r.dir
+        l.dir = tick_dir
+        l.next_dir = l.dir
+
     tick(r)
     tick(l)
 
@@ -363,7 +371,7 @@ func release_bubble()->void:
   bubbles.append(b)
   b.visible = true
   b.set_pos(pos)
-  b.dir = player.dir
+  b.set_dir(player.dir)
   b.state = Bubble.State.MOVING
 
 

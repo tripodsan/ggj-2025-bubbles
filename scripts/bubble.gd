@@ -68,7 +68,7 @@ func reset():
 
 func set_dir(v:int):
   dir = v
-  #visual.rotation_degrees = dir * 90
+  sub.rotation_degrees = dir * 90
 
 func set_type(t:Type)->void:
   type = t
@@ -92,12 +92,12 @@ func recalc_sub()->void:
   if right == null:
     left.position = Vector2.ZERO
   else:
-    left.position = Vector2(-2, 0)
-    right.position = Vector2(2, 0)
+    left.position = Vector2(0, -2)
+    right.position = Vector2(0, 2)
 
 func apply(speed:float):
   pos = next_pos
-  dir = next_dir
+  set_dir(next_dir)
   state = next_state
   #prints(State.keys()[state])
   #visual.position = Vector2.ZERO if state == State.ENTERING else Global.DIRS[dir] * 1.0
@@ -157,8 +157,17 @@ func absorb(b:Bubble)->void:
   else:
     sub.add_child(b)
   b.scale = Vector2.ONE
+  b.sub.visible = false
   if left == null:
     left = b
   else:
     right = b
   recalc_sub()
+
+func leave()->void:
+  state = Bubble.State.MOVING
+  next_state = Bubble.State.MOVING
+  scale = Vector2.ONE
+  rotation_degrees = 0
+  sub.rotation_degrees = 0
+  sub.visible = true

@@ -14,11 +14,11 @@ config/name="Böbl"
 config/version="0.9"
 run/main_scene="uid://b6pn56m58b44l"
 config/features=PackedStringArray("4.4", "Forward Plus")
-boot_splash/bg_color=Color(0.12549, 0.282353, 0.501961, 1)
-boot_splash/image="uid://crqw8vb7k34nl"
+boot_splash/bg_color=Color(0, 0.223529, 0.447059, 1)
+boot_splash/image="uid://bbotq15knmg64"
 boot_splash/fullsize=false
 config/icon="uid://dp7p48r2pylsp"
-boot_splash/minimum_display_time=100
+boot_splash/minimum_display_time=500
 
 [autoload]
 
