@@ -31,7 +31,7 @@ var corner_matrix = [
   [1, 1, 2, 2],
   [3, 2, 2, 3],
   [0, 0, 3, 3],
-  [0, 3, 3, 0]
+  [0, 1, 1, 0]
 ]
 
 var current_level_scn:PackedScene
@@ -242,6 +242,7 @@ func tick(b:Bubble):
       # todo: add turn animation and extra tick
       var ct:int = int(get_color_type(b.pos))
       b.next_dir = corner_matrix[ct][b.dir]
+      b.next_pos = b.pos + Global.DIRS[b.next_dir]
       return
     # check if another bubble is on this pos
     var c:Bubble = get_bubble(b.pos, b)
