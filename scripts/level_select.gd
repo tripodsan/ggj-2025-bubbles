@@ -18,7 +18,9 @@ var levels = [
   preload("res://levels/level10.tscn"),
   preload("res://levels/level11.tscn"),
   preload("res://levels/level12.tscn"),
-  preload("res://levels/level13.tscn")
+  preload("res://levels/level13.tscn"),
+  preload("res://levels/level14.tscn"),
+  preload("res://levels/level15.tscn")
 ]
 
 const MIN_LEVEL:int = 0
