@@ -402,6 +402,7 @@ func init_level():
   rocks.clear()
   sensors.clear()
   doors.clear()
+  player.reset()
   for c:Vector2i in walls.get_used_cells():
     var d:TileData = walls.get_cell_tile_data(c)
     var type:StringName = d.get_custom_data("type")

@@ -79,7 +79,7 @@ theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 columns = 6
 
-[node name="1" type="Button" parent="gui/level_select/VBoxContainer/levels_grid"]
+[node name="template" type="Button" parent="gui/level_select/VBoxContainer/levels_grid"]
 layout_mode = 2
 text = "1"
 
@@ -128,6 +128,7 @@ layout_mode = 2
 text = "12"
 
 [node name="title" type="MarginContainer" parent="gui"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -174,7 +175,6 @@ lifetime = 2.85
 process_material = SubResource("ParticleProcessMaterial_kek77")
 
 [node name="win" type="MarginContainer" parent="gui"]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -207,7 +207,7 @@ theme_override_styles/separator = SubResource("StyleBoxEmpty_272bh")
 layout_mode = 2
 size_flags_horizontal = 4
 theme = ExtResource("2_272bh")
-theme_override_font_sizes/font_size = 17
+theme_override_font_sizes/font_size = 14
 text = "NEXT LEVEL"
 
 [node name="bubbles" type="GPUParticles2D" parent="gui/win"]

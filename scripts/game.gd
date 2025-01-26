@@ -71,6 +71,10 @@ func _unhandled_input(event: InputEvent) -> void:
       hide_pause()
     elif world.visible:
       show_pause()
+  if event.is_action_pressed("restart"):
+    get_viewport().set_input_as_handled()
+    _on_restart_pressed()
+
 
 func _on_play_pressed() -> void:
   show_level_select()

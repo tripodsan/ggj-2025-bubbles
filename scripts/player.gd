@@ -31,3 +31,6 @@ func push_bubble(b:Bubble)->bool:
     stack.append(b)
     return true
   return false
+
+func reset():
+  stack.clear()
