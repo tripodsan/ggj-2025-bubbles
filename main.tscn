@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://b6pn56m58b44l"]
+[gd_scene load_steps=15 format=3 uid="uid://b6pn56m58b44l"]
 
 [ext_resource type="Script" uid="uid://4xixxswrl7q5" path="res://scripts/game.gd" id="1_4c57u"]
 [ext_resource type="Texture2D" uid="uid://dx7ifyggj34ib" path="res://assets/bubble_small.png" id="1_5vw27"]
@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://csfi7vtw5w8g4" path="res://assets/tiles.png" id="4_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://bgl3phgbn5ixv" path="res://levels/level0.tscn" id="5_272bh"]
 [ext_resource type="Texture2D" uid="uid://ifm146kwhjfc" path="res://assets/shrimpy.png" id="7_5vw27"]
+[ext_resource type="Texture2D" uid="uid://d3j1cy6es4c1m" path="res://assets/shrimparty.png" id="7_efxa6"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_5vw27"]
 
@@ -44,6 +45,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="level_select" type="MarginContainer" parent="gui"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -171,6 +173,48 @@ texture = ExtResource("1_5vw27")
 lifetime = 2.85
 process_material = SubResource("ParticleProcessMaterial_kek77")
 
+[node name="win" type="MarginContainer" parent="gui"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="gui/win"]
+layout_mode = 2
+
+[node name="label" type="Label" parent="gui/win/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("2_272bh")
+theme_override_font_sizes/font_size = 14
+text = "LEVEL COMPLETE"
+horizontal_alignment = 1
+
+[node name="Shrimpy" type="Sprite2D" parent="gui/win/VBoxContainer"]
+position = Vector2(160, 83)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("7_efxa6")
+
+[node name="HSeparator" type="HSeparator" parent="gui/win/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 100
+theme_override_styles/separator = SubResource("StyleBoxEmpty_272bh")
+
+[node name="nextlevel" type="Button" parent="gui/win/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme = ExtResource("2_272bh")
+theme_override_font_sizes/font_size = 17
+text = "NEXT LEVEL"
+
+[node name="bubbles" type="GPUParticles2D" parent="gui/win"]
+position = Vector2(160, 180)
+amount = 20
+texture = ExtResource("1_5vw27")
+lifetime = 2.85
+process_material = SubResource("ParticleProcessMaterial_kek77")
+
 [node name="world" type="Node2D" parent="."]
 unique_name_in_owner = true
 visible = false
@@ -188,5 +232,6 @@ region_enabled = true
 region_rect = Rect2(48, 160, 16, 16)
 
 [connection signal="pressed" from="gui/title/VBoxContainer/play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="gui/win/VBoxContainer/nextlevel" to="." method="_on_nextlevel_pressed"]
 
 [editable path="world/level"]
