@@ -457,7 +457,7 @@ func init_level():
       })
       walls.set_cell(c, -1)
     elif type == &"db_left":
-      complex_bubble(c, {
+      var b:Bubble = complex_bubble(c, {
         "color": Bubble.Type.GREEN,
         "children": [
           {
@@ -469,9 +469,11 @@ func init_level():
           }
         ]
       })
+      b.state = Bubble.State.MOVING
+      b.set_dir(2)
       walls.set_cell(c, -1)
     elif type == &"db_down":
-      complex_bubble(c, {
+      var b:Bubble = complex_bubble(c, {
         "color": Bubble.Type.GREEN,
         "children": [
           {
@@ -483,9 +485,11 @@ func init_level():
           }
         ]
       })
+      b.state = Bubble.State.MOVING
+      b.set_dir(1)
       walls.set_cell(c, -1)
     elif type == &"db_right":
-      complex_bubble(c, {
+      var b:Bubble = complex_bubble(c, {
         "color": Bubble.Type.GREEN,
         "children": [
           {
@@ -497,9 +501,11 @@ func init_level():
           }
         ]
       })
+      b.state = Bubble.State.MOVING
+      b.set_dir(0)
       walls.set_cell(c, -1)
     elif type == &"db_up":
-      complex_bubble(c, {
+      var b:Bubble = complex_bubble(c, {
         "color": Bubble.Type.GREEN,
         "children": [
           {
@@ -511,6 +517,8 @@ func init_level():
           }
         ]
       })
+      b.state = Bubble.State.MOVING
+      b.set_dir(3)
       walls.set_cell(c, -1)
     elif type == &"rock":
       create_rock(c)
