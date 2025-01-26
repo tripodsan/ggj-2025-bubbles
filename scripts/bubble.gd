@@ -129,7 +129,7 @@ func turn()->void:
   next_state = State.TURNING
 
 func is_stationary()->bool:
-  return state == State.IDLE or state == State.TURNING
+  return state != State.MOVING
 
 ## tests if can be merged with other bubble and return the resulting parent
 func can_merge(b:Bubble)->Bubble:

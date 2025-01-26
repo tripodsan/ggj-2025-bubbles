@@ -366,7 +366,7 @@ func create_rock(pos:Vector2i)->Rock:
 func release_bubble()->void:
   var pos = player.pos + Global.DIRS[player.dir]
   var type:StringName = get_type(pos)
-  if type != &"" and type != &"spike": return
+  if type != &"" and type != &"spike" and type != &"corner": return
   if get_rock(pos): return
   if is_closed_door(pos): return
 
