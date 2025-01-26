@@ -187,4 +187,6 @@ texture = ExtResource("4_1bvp3")
 region_enabled = true
 region_rect = Rect2(48, 160, 16, 16)
 
+[connection signal="pressed" from="gui/title/VBoxContainer/play" to="." method="_on_play_pressed"]
+
 [editable path="world/level"]

@@ -7,8 +7,8 @@ extends Node2D
 
 func _ready():
   Global.select_level.connect(load_level)
-  #show_title()
-  show_level_select()
+  show_title()
+  #show_level_select()
 
 func show_title():
   world.hide()
@@ -27,3 +27,7 @@ func load_level(nr:int, scn:PackedScene):
   world.show()
   world.process_mode = Node.PROCESS_MODE_INHERIT
   world.load_level(nr, scn)
+
+
+func _on_play_pressed() -> void:
+  show_level_select()

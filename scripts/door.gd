@@ -18,6 +18,7 @@ func _ready():
 
 @export var open:bool:
   set(v):
+    if not visual: return
     if open != v:
       open = v
       if open:
