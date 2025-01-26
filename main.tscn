@@ -174,7 +174,6 @@ lifetime = 2.85
 process_material = SubResource("ParticleProcessMaterial_kek77")
 
 [node name="win" type="MarginContainer" parent="gui"]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -189,7 +188,7 @@ layout_mode = 2
 layout_mode = 2
 theme = ExtResource("2_272bh")
 theme_override_font_sizes/font_size = 14
-text = "LEVEL COMPLETE"
+text = "SHRIMPALICIOUS"
 horizontal_alignment = 1
 
 [node name="Shrimpy" type="Sprite2D" parent="gui/win/VBoxContainer"]
