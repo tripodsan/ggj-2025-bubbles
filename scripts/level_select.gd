@@ -45,4 +45,4 @@ func focus_level():
       return
 
 func _on_level_pressed(nr:int):
-  Global.select_level.emit(nr, levels[nr])
+  Global.select_level.emit(nr)
