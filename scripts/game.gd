@@ -90,4 +90,4 @@ func _on_cont_pressed() -> void:
 
 func _on_quit_level_pressed() -> void:
   hide_pause()
-  show_level_select()
+  show_title()

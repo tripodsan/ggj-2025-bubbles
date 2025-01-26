@@ -12,7 +12,7 @@ func _ready():
 @export var vertical:bool:
   set(v):
     vertical = v
-    if Engine.is_editor_hint():
+    if visual:
       visual.animation = 'vert' if v else 'horz'
       visual.stop()
 

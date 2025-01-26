@@ -379,6 +379,9 @@ func release_bubble()->void:
   b.set_pos(pos)
   b.set_dir(player.dir)
   b.state = Bubble.State.MOVING
+  var s:Sensor = get_sensor(b.pos)
+  if s && (s.type == b.type || s.type == Sensor.Type.SENSOR_WHITE):
+    s.toggle()
 
 
 func bubble_tree(outer:bool, tree:Dictionary)->Bubble:
