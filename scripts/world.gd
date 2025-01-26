@@ -173,21 +173,39 @@ func burst_bubble(b:Bubble)->void:
   bubbles.erase(b)
   b.queue_free()
   if b.left == null: return
+  var l = b.left
+  l.processed = false
+  l.state = Bubble.State.MOVING
+  l.next_state = Bubble.State.MOVING
+  l.reparent(objects)
+  l.scale = Vector2.ONE
+  l.set_pos(b.pos)
+  l.immune = b.pos
+  bubbles.append(l)
   if b.right == null:
     # only 1 bubble
-    var c = b.left
-    c.processed = false
-    c.state = Bubble.State.MOVING
-    c.next_state = Bubble.State.MOVING
-    c.dir = b.dir
-    c.next_dir = b.dir
-    c.reparent(objects)
-    c.scale = Vector2.ONE
-    c.set_pos(b.pos)
-    c.immune = b.pos
-    bubbles.append(c)
-    tick(c)
-
+    l.dir = b.dir
+    l.next_dir = b.dir
+    tick(l)
+  else:
+    var r = b.right
+    r.processed = false
+    r.state = Bubble.State.MOVING
+    r.next_state = Bubble.State.MOVING
+    r.reparent(objects)
+    r.scale = Vector2.ONE
+    r.set_pos(b.pos)
+    r.immune = b.pos
+    bubbles.append(r)
+    var tick_dir = int(get_color_type(b.pos))
+    # if hit opposite:
+    if b.dir == (tick_dir + 2) % 4:
+      l.dir = (b.dir + 3) % 4
+      l.next_dir = l.dir
+      r.dir = (b.dir + 1) % 4
+      r.next_dir = r.dir
+    tick(r)
+    tick(l)
 
 func tick(b:Bubble):
   if b.processed: return
@@ -208,12 +226,17 @@ func tick(b:Bubble):
     return
   if b.state == Bubble.State.MOVING:
     # check if the bubble is on a spike
-    if get_type(b.pos) == &"spike" && b.immune != b.pos:
+    var type:StringName = get_type(b.pos)
+    if type == &"spike" && b.immune != b.pos:
       b.next_state = Bubble.State.BURSTING
+      return
+    # check for corner
+    if type == &"corner":
+      # todo: add turn animation and extra tick
       return
     # check if another bubble is on this pos
     var c:Bubble = get_bubble(b.pos, b)
-    if c:
+    if c && b.immune != b.pos:
       c.processed = true
       var p:Bubble = b.can_merge(c)
       if p == null:
@@ -227,11 +250,16 @@ func tick(b:Bubble):
 
     var dir:int = b.dir
     var next_pos:Vector2i = b.pos + Global.DIRS[dir]
-    var type:= get_type(next_pos)
+    type = get_type(next_pos)
     if type == &"spike":
       # handle bursting in the next tick
       b.next_pos = next_pos
       return
+    if type == &"corner":
+      # handle corner in the next tick
+      b.next_pos = next_pos
+      return
+
     if walls.get_cell_tile_data(next_pos) != null || is_closed_door(next_pos):
       # bounce on wall
       b.turn()
@@ -332,6 +360,17 @@ func init_level():
       walls.set_cell(c, -1)
     elif type == &"bubble":
       create_bubble(c, color)
+      walls.set_cell(c, -1)
+    elif type == &"bubble_2":
+      var b:Bubble = create_bubble(c, color)
+      var b2:Bubble = BUBBLE.instantiate()
+      b2.state = Bubble.State.ENTERING
+      b2.set_type(Bubble.Type.RED)
+      b.absorb(b2)
+      b2 = BUBBLE.instantiate()
+      b2.state = Bubble.State.ENTERING
+      b2.set_type(color)
+      b.absorb(b2)
       walls.set_cell(c, -1)
     elif type == &"rock":
       create_rock(c)

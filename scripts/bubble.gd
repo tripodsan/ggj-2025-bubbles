@@ -108,13 +108,7 @@ func apply(speed:float):
   elif state == State.ABSORBING:
     assert(next_child)
     assert(!is_full())
-    next_child.reparent(sub, false)
-    next_child.scale = Vector2.ONE
-    if left == null:
-      left = next_child
-    else:
-      right = next_child
-    recalc_sub()
+    absorb(next_child)
   elif state == State.ENTERING:
     set_type(type)
 
@@ -156,3 +150,15 @@ func merge(b:Bubble)->void:
   next_child = b
   if is_stationary():
     next_dir = b.dir
+
+func absorb(b:Bubble)->void:
+  if b.get_parent():
+    b.reparent(sub, false)
+  else:
+    sub.add_child(b)
+  b.scale = Vector2.ONE
+  if left == null:
+    left = b
+  else:
+    right = b
+  recalc_sub()
