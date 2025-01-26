@@ -353,6 +353,35 @@ func release_bubble()->void:
   b.dir = player.dir
   b.state = Bubble.State.MOVING
 
+
+func bubble_tree(outer:bool, tree:Dictionary)->Bubble:
+  var color = tree['color']
+  var children = tree['children']
+  var size = children.size()
+  var b0:Bubble = BUBBLE.instantiate()
+  b0.set_type(color)
+  if outer:
+    #b.set_pos(pos)
+    bubbles.append(b0)
+    objects.add_child(b0)
+  if size == 1:
+    var b1:Bubble = bubble_tree(false, children[0])
+    b1.state = Bubble.State.ENTERING
+    b0.absorb(b1)
+  if size == 2:
+    var b1:Bubble = bubble_tree(false, children[0])
+    b1.state = Bubble.State.ENTERING
+    b0.absorb(b1)
+    var b2:Bubble = bubble_tree(false, children[1])
+    b2.state = Bubble.State.ENTERING
+    b0.absorb(b2)
+  return b0
+
+func complex_bubble(pos:Vector2i, tree:Dictionary)->Bubble:
+  var b:Bubble = bubble_tree(true, tree)
+  b.set_pos(pos)
+  return b
+
 func init_level():
   walls = get_node('level/walls')
   floor = get_node('level/floor')
@@ -372,15 +401,88 @@ func init_level():
       create_bubble(c, color)
       walls.set_cell(c, -1)
     elif type == &"bubble_2":
-      var b:Bubble = create_bubble(c, color)
-      var b2:Bubble = BUBBLE.instantiate()
-      b2.state = Bubble.State.ENTERING
-      b2.set_type(Bubble.Type.RED)
-      b.absorb(b2)
-      b2 = BUBBLE.instantiate()
-      b2.state = Bubble.State.ENTERING
-      b2.set_type(color)
-      b.absorb(b2)
+      complex_bubble(c, {
+        "color": Bubble.Type.WHITE,
+        "children": [
+          {
+            "color": Bubble.Type.RED,
+            "children": []
+          }, {
+            "color": Bubble.Type.WHITE,
+            "children": []
+          }
+        ]
+      })
+      walls.set_cell(c, -1)
+    elif type == &"bubble_3":
+      complex_bubble(c, {
+        "color": Bubble.Type.WHITE,
+        "children": [
+          {
+            "color": Bubble.Type.RED,
+            "children": []
+          }, {
+            "color": Bubble.Type.GREEN,
+            "children": []
+          }
+        ]
+      })
+      walls.set_cell(c, -1)
+    elif type == &"db_left":
+      complex_bubble(c, {
+        "color": Bubble.Type.GREEN,
+        "children": [
+          {
+            "color": Bubble.Type.BLUE,
+            "children": []
+          }, {
+            "color": Bubble.Type.BLUE,
+            "children": []
+          }
+        ]
+      })
+      walls.set_cell(c, -1)
+    elif type == &"db_down":
+      complex_bubble(c, {
+        "color": Bubble.Type.GREEN,
+        "children": [
+          {
+            "color": Bubble.Type.BLUE,
+            "children": []
+          }, {
+            "color": Bubble.Type.BLUE,
+            "children": []
+          }
+        ]
+      })
+      walls.set_cell(c, -1)
+    elif type == &"db_right":
+      complex_bubble(c, {
+        "color": Bubble.Type.GREEN,
+        "children": [
+          {
+            "color": Bubble.Type.BLUE,
+            "children": []
+          }, {
+            "color": Bubble.Type.BLUE,
+            "children": []
+          }
+        ]
+      })
+      walls.set_cell(c, -1)
+    elif type == &"db_up":
+      complex_bubble(c, {
+        "color": Bubble.Type.GREEN,
+        "children": [
+          {
+            "color": Bubble.Type.BLUE,
+            "children": []
+          }, {
+            "color": Bubble.Type.BLUE,
+            "children": []
+          }
+        ]
+      })
       walls.set_cell(c, -1)
     elif type == &"rock":
       create_rock(c)
