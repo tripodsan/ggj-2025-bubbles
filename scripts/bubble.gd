@@ -43,9 +43,11 @@ var state:State = State.IDLE
 
 var next_state:State = State.IDLE
 
-var next_children:Array[Bubble] = []
+var next_child:Bubble
 
-var max_children:int = 1
+var left:Bubble
+var right:Bubble
+var immune:Vector2i
 
 @onready var sub: Node2D = $sub
 
@@ -54,12 +56,15 @@ var tween:Tween
 static func type_from_color(s:String)->Bubble.Type:
   return Bubble.Type.get(s.to_upper(), Bubble.Type.WHITE)
 
+func _ready() -> void:
+  set_type(type)
+
 func reset():
   processed = false
   next_pos = pos
   next_dir = dir
   next_state = state
-  next_children.clear()
+  next_child = null
 
 func set_dir(v:int):
   dir = v
@@ -76,10 +81,19 @@ func move_to(v:Vector2):
   pos = v
 
 func is_full()->bool:
-  return sub.get_child_count() >= max_children
+  return right != null
 
 func get_num_children()->int:
-  return sub.get_child_count()
+  if left == null: return 0
+  return 1 if right == null else 2
+
+func recalc_sub()->void:
+  if left == null: return
+  if right == null:
+    left.position = Vector2.ZERO
+  else:
+    left.position = Vector2(-2, 0)
+    right.position = Vector2(2, 0)
 
 func apply(speed:float):
   pos = next_pos
@@ -92,17 +106,27 @@ func apply(speed:float):
     tween = create_tween()
     tween.tween_property(self, 'position', Global.grid2cart(pos), speed)
   elif state == State.ABSORBING:
-    for b in next_children:
-      b.reparent(sub, true)
-      b.position = Vector2.ZERO
-      b.scale = Vector2.ONE
+    assert(next_child)
+    assert(!is_full())
+    next_child.reparent(sub, false)
+    next_child.scale = Vector2.ONE
+    if left == null:
+      left = next_child
+    else:
+      right = next_child
+    recalc_sub()
   elif state == State.ENTERING:
     set_type(type)
 
   if state == State.TURNING:
     visual.play(turn_names[(dir + 2) % 4 + type * 4], 1.5)
+  elif state == State.BURSTING:
+    prints('play ', anim_names[type])
+    visual.play(anim_names[type])
   else:
     set_type(type)
+  if immune != pos:
+    immune = Vector2i.ZERO
 
 
 ## sets the next direction and state to make the bubble turn
@@ -127,9 +151,8 @@ func can_merge(b:Bubble)->Bubble:
   return self if get_num_children() < b.get_num_children() else b
 
 func merge(b:Bubble)->void:
-  assert(get_num_children() < max_children)
   next_state = State.ABSORBING
   b.next_state = State.ENTERING
-  next_children.append(b)
+  next_child = b
   if is_stationary():
     next_dir = b.dir

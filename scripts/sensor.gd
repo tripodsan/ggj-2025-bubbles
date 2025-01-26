@@ -13,7 +13,8 @@ var trigger_node:Node2D
 @export var active:bool = false:
   set(v):
     active = v
-    update_type()
+    if visual:
+      update_type()
 
 @export var type:Type:
   set(v):
@@ -29,7 +30,6 @@ func update_type():
   var str:String = Type.keys()[type].to_lower()
   if active:
     str += '_active'
-  prints('set anim', str)
   visual.animation = str
   visual.stop()
 

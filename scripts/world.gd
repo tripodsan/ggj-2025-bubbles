@@ -169,6 +169,26 @@ func get_next_bubble(pos:Vector2i, ignored:Bubble)->Bubble:
     if b != ignored && b.next_pos == pos: return b
   return null
 
+func burst_bubble(b:Bubble)->void:
+  bubbles.erase(b)
+  b.queue_free()
+  if b.left == null: return
+  if b.right == null:
+    # only 1 bubble
+    var c = b.left
+    c.processed = false
+    c.state = Bubble.State.MOVING
+    c.next_state = Bubble.State.MOVING
+    c.dir = b.dir
+    c.next_dir = b.dir
+    c.reparent(objects)
+    c.scale = Vector2.ONE
+    c.set_pos(b.pos)
+    c.immune = b.pos
+    bubbles.append(c)
+    tick(c)
+
+
 func tick(b:Bubble):
   if b.processed: return
   b.processed = true
@@ -183,11 +203,13 @@ func tick(b:Bubble):
   if b.state == Bubble.State.TURNING:
     b.state = Bubble.State.MOVING
     b.next_state = Bubble.State.MOVING
-
+  if b.state == Bubble.State.BURSTING:
+    burst_bubble(b)
+    return
   if b.state == Bubble.State.MOVING:
     # check if the bubble is on a spike
-    if get_type(b.pos) == &"spike":
-      b.next_state == Bubble.State.BURSTING
+    if get_type(b.pos) == &"spike" && b.immune != b.pos:
+      b.next_state = Bubble.State.BURSTING
       return
     # check if another bubble is on this pos
     var c:Bubble = get_bubble(b.pos, b)
