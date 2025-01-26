@@ -13,7 +13,11 @@ var levels = [
   preload("res://levels/level5.tscn"),
   preload("res://levels/level6.tscn"),
   preload("res://levels/level7.tscn"),
-  preload("res://levels/level8.tscn")
+  preload("res://levels/level8.tscn"),
+  preload("res://levels/level9.tscn"),
+  preload("res://levels/level10.tscn"),
+  preload("res://levels/level11.tscn"),
+  preload("res://levels/level12.tscn")
 ]
 
 func _ready():

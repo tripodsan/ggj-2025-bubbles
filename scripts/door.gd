@@ -18,8 +18,9 @@ func _ready():
 
 @export var open:bool:
   set(v):
-    open = v
-    if open:
-      visual.play()
-    else:
-      visual.play_backwards()
+    if open != v:
+      open = v
+      if open:
+        visual.play()
+      else:
+        visual.play_backwards()

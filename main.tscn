@@ -44,7 +44,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="level_select" type="MarginContainer" parent="gui"]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -66,7 +65,7 @@ horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="gui/level_select/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 12
 theme_override_styles/separator = SubResource("StyleBoxEmpty_5vw27")
 
 [node name="levels_grid" type="GridContainer" parent="gui/level_select/VBoxContainer"]
@@ -75,7 +74,7 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
-columns = 4
+columns = 6
 
 [node name="1" type="Button" parent="gui/level_select/VBoxContainer/levels_grid"]
 layout_mode = 2
@@ -108,6 +107,22 @@ text = "7"
 [node name="8" type="Button" parent="gui/level_select/VBoxContainer/levels_grid"]
 layout_mode = 2
 text = "8"
+
+[node name="9" type="Button" parent="gui/level_select/VBoxContainer/levels_grid"]
+layout_mode = 2
+text = "9"
+
+[node name="10" type="Button" parent="gui/level_select/VBoxContainer/levels_grid"]
+layout_mode = 2
+text = "10"
+
+[node name="11" type="Button" parent="gui/level_select/VBoxContainer/levels_grid"]
+layout_mode = 2
+text = "11"
+
+[node name="12" type="Button" parent="gui/level_select/VBoxContainer/levels_grid"]
+layout_mode = 2
+text = "12"
 
 [node name="title" type="MarginContainer" parent="gui"]
 visible = false
@@ -158,6 +173,7 @@ process_material = SubResource("ParticleProcessMaterial_kek77")
 
 [node name="world" type="Node2D" parent="."]
 unique_name_in_owner = true
+visible = false
 script = ExtResource("1_h2yge")
 
 [node name="level" parent="world" instance=ExtResource("5_272bh")]
