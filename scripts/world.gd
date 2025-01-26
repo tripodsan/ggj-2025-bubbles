@@ -168,10 +168,11 @@ func get_bubble(pos:Vector2i, ignored:Bubble)->Bubble:
     if b != ignored && b.pos == pos: return b
   return null
 
-func can_move_rock(pos:Vector2i):
-  if walls.get_cell_tile_data(pos) != null: return
-  if is_closed_door(pos): return
-  if get_rock(pos): return
+func can_move_rock(pos:Vector2i)->bool:
+  if walls.get_cell_tile_data(pos) != null: return false
+  if is_closed_door(pos): return false
+  if get_rock(pos): return false
+  if get_bubble(pos, null): return false
   return true
 
 func get_rock(pos:Vector2i)->Rock:
@@ -226,7 +227,6 @@ func burst_bubble(b:Bubble)->void:
         r.next_dir = r.dir
         l.dir = tick_dir
         l.next_dir = l.dir
-
     tick(r)
     tick(l)
 
@@ -296,7 +296,11 @@ func tick(b:Bubble):
       if can_move_rock(next_rock_pos):
         r.next_dir = dir
         r.next_pos = next_rock_pos
-        b.next_state = Bubble.State.IDLE
+        if b.immune == b.pos:
+          b.immune = Vector2i.ZERO
+          b.next_state = Bubble.State.BURSTING
+        else:
+          b.next_state = Bubble.State.IDLE
       else:
         b.turn()
       return
