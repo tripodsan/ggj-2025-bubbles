@@ -15,7 +15,8 @@ var dir:int = 0
 var next_dir:int = 0
 
 func _ready() -> void:
-  pos = Global.cart2grid(position)
+  if !Engine.is_editor_hint():
+    pos = Global.cart2grid(position)
 
 func reset():
   processed = false

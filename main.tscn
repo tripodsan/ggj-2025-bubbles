@@ -44,6 +44,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="level_select" type="MarginContainer" parent="gui"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -109,6 +110,7 @@ layout_mode = 2
 text = "8"
 
 [node name="title" type="MarginContainer" parent="gui"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -156,7 +158,6 @@ process_material = SubResource("ParticleProcessMaterial_kek77")
 
 [node name="world" type="Node2D" parent="."]
 unique_name_in_owner = true
-visible = false
 script = ExtResource("1_h2yge")
 
 [node name="level" parent="world" instance=ExtResource("5_272bh")]

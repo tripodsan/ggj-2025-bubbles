@@ -5,6 +5,7 @@ extends Cell
 @onready var visual: AnimatedSprite2D = $visual
 
 func _ready():
+  super()
   visual.animation = 'vert' if vertical else 'horz'
   visual.stop()
 

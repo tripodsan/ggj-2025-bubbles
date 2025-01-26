@@ -110,13 +110,14 @@ func update_sensors():
       s.activate(false)
       s.trigger_node = null
 
-func tick_player():
-  var pos:Vector2 = player.pos + Global.DIRS[player.dir]
+func tick_player(dir:int):
+  var pos:Vector2 = player.pos + Global.DIRS[dir]
   if walls.get_cell_tile_data(pos) != null: return
   if !is_ground(pos): return
+  if is_closed_door(pos): return
   var r:Rock = get_rock(pos)
   if r != null:
-    var next_rock_pos:Vector2i = r.pos + Global.DIRS[player.dir]
+    var next_rock_pos:Vector2i = r.pos + Global.DIRS[dir]
     if !can_move_rock(next_rock_pos): return
     if get_bubble(next_rock_pos, null): return
     r.set_pos(next_rock_pos)
@@ -124,6 +125,7 @@ func tick_player():
   if b:
     pickup_bubble(b)
 
+  player.dir = dir
   player.pos = pos
 
 func pickup_bubble(b:Bubble):
@@ -143,6 +145,11 @@ func get_sensor(pos:Vector2i)->Sensor:
     if s.pos == pos: return s
   return null
 
+func is_closed_door(pos:Vector2i)->bool:
+  for s:Door in doors:
+    if s.pos == pos: return !s.open
+  return false
+
 func get_bubble(pos:Vector2i, ignored:Bubble)->Bubble:
   for b:Bubble in bubbles:
     if b != ignored && b.pos == pos: return b
@@ -150,6 +157,7 @@ func get_bubble(pos:Vector2i, ignored:Bubble)->Bubble:
 
 func can_move_rock(pos:Vector2i):
   if walls.get_cell_tile_data(pos) != null: return
+  if is_closed_door(pos): return
   return true
 
 func get_rock(pos:Vector2i)->Rock:
@@ -194,7 +202,7 @@ func tick(b:Bubble):
 
     var dir:int = b.dir
     var next_pos:Vector2i = b.pos + Global.DIRS[dir]
-    if walls.get_cell_tile_data(next_pos) != null:
+    if walls.get_cell_tile_data(next_pos) != null || is_closed_door(next_pos):
       # bounce on wall
       b.turn()
       return
@@ -238,9 +246,8 @@ func tick(b:Bubble):
     b.next_pos = next_pos
 
 func player_move(dir:int):
-  player.dir = dir
   pending_move = true
-  tick_player()
+  tick_player(dir)
 
 func get_type(pos:Vector2i)->StringName:
   var d:TileData = walls.get_cell_tile_data(pos)

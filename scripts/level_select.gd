@@ -31,7 +31,9 @@ func _ready():
     btn.text = str(i)
     btn.pressed.connect(_on_level_pressed.bind(i))
     levels_grid.add_child(btn)
+    if i == 0: btn.grab_focus()
     i += 1
+
 
 func _on_level_pressed(nr:int):
   Global.select_level.emit(nr, levels[nr])
