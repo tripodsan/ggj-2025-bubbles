@@ -42,11 +42,15 @@ type = 4
 position = Vector2(136, 120)
 type = 4
 
+[node name="sensor7" parent="." instance=ExtResource("2_6xkyh")]
+position = Vector2(120, 104)
+type = 4
+
 [node name="door" parent="." instance=ExtResource("3_8cf2o")]
 position = Vector2(168, 24)
 vertical = true
 
 [node name="Activator" type="Node" parent="door" node_paths=PackedStringArray("targets")]
 script = ExtResource("4_8cf2o")
-targets = [NodePath("../../sensor"), NodePath("../../sensor2"), NodePath("../../sensor3"), NodePath("../../sensor4"), NodePath("../../sensor5"), NodePath("../../sensor6")]
+targets = [NodePath("../../sensor"), NodePath("../../sensor2"), NodePath("../../sensor3"), NodePath("../../sensor4"), NodePath("../../sensor5"), NodePath("../../sensor6"), NodePath("../../sensor7")]
 metadata/_custom_type_script = ExtResource("4_8cf2o")
