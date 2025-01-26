@@ -257,9 +257,11 @@ func tick(b:Bubble):
     if type == &"corner":
       # todo: add turn animation and extra tick
       var ct:int = int(get_color_type(b.pos))
-      b.next_dir = corner_matrix[ct][b.dir]
-      b.next_pos = b.pos + Global.DIRS[b.next_dir]
-      return
+      #b.next_dir = corner_matrix[ct][b.dir]
+      #b.next_pos = b.pos + Global.DIRS[b.next_dir]
+      b.dir = corner_matrix[ct][b.dir]
+      b.next_dir = b.dir
+      #return
     # check if another bubble is on this pos
     var c:Bubble = get_bubble(b.pos, b)
     if c && b.immune != b.pos:
