@@ -21,7 +21,6 @@ metadata/_edit_lock_ = true
 [node name="door" parent="." instance=ExtResource("2_ns7dn")]
 position = Vector2(136, 72)
 vertical = true
-open = true
 
 [node name="Activator" type="Node" parent="door" node_paths=PackedStringArray("targets")]
 script = ExtResource("3_jihs6")
