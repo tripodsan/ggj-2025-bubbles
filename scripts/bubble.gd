@@ -1,3 +1,4 @@
+@tool
 class_name Bubble
 extends Cell
 
@@ -37,9 +38,11 @@ var turn_names = [
   "b_blue_n",
 ]
 
-var type:Type = Type.WHITE
+@export
+var type:Type = Type.WHITE: set = set_type
 
-var state:State = State.IDLE
+@export
+var state:State = State.IDLE: set = set_state
 
 var next_state:State = State.IDLE
 
@@ -47,17 +50,31 @@ var next_child:Bubble
 
 var left:Bubble
 var right:Bubble
-var immune:Vector2i
 
-@onready var sub: Node2D = $sub
+var immune:Vector2i
 
 var tween:Tween
 
 static func type_from_color(s:String)->Bubble.Type:
   return Bubble.Type.get(s.to_upper(), Bubble.Type.WHITE)
 
-func _ready() -> void:
-  set_type(type)
+func _ready():
+  super()
+  register_child_bubbles()
+  _queue_update = true
+
+func _notification(what: int) -> void:
+  if what == NOTIFICATION_CHILD_ORDER_CHANGED and Engine.is_editor_hint():
+    register_child_bubbles()
+    _queue_update = true
+
+func register_child_bubbles():
+  left = null
+  right = null
+  for n:Node2D in get_children():
+    if n is Bubble:
+      if left == null: left = n
+      else: right = n
 
 func reset():
   processed = false
@@ -66,19 +83,31 @@ func reset():
   next_state = state
   next_child = null
 
-func set_dir(v:int):
-  dir = v
-  sub.rotation_degrees = dir * 90
+func _process(_d)->void:
+  if !_queue_update: return
+  _queue_update = false
+  if !visual: return
+  match state:
+    State.IDLE, State.MOVING, State.ABSORBING:
+      visual.animation = anim_names[type]
+      visual.stop()
+    State.ENTERING:
+      visual.animation = anim_names[type + 4]
+      visual.stop()
+    State.TURNING:
+      visual.play(turn_names[(dir + 2) % 4 + type * 4], 1.0 / Global.tick_speed)
+    State.BURSTING:
+      visual.play(anim_names[type])
+  recalc_sub()
 
 func set_type(t:Type)->void:
   type = t
-  var offset:int = 4 if state == State.ENTERING else 0
-  if visual:
-    visual.animation = anim_names[t + offset]
-    visual.stop()
+  _queue_update = true
 
-func move_to(v:Vector2):
-  pos = v
+func set_state(s:State)->void:
+  if state != s:
+    state = s
+    _queue_update = true
 
 func is_full()->bool:
   return right != null
@@ -89,36 +118,29 @@ func get_num_children()->int:
 
 func recalc_sub()->void:
   if left == null: return
+  left.visible = state != State.ENTERING
   if right == null:
+    # hide children if we are inside a bubble
     left.position = Vector2.ZERO
   else:
-    left.position = Vector2(0, -2)
-    right.position = Vector2(0, 2)
+    right.visible = state != State.ENTERING
+    left.position = -Global.DIRS[(dir + 1)%4] * 2
+    right.position = Global.DIRS[(dir + 1)%4] * 2
 
-func apply(speed:float):
+func apply():
   pos = next_pos
   set_dir(next_dir)
-  state = next_state
-  #prints(State.keys()[state])
-  #visual.position = Vector2.ZERO if state == State.ENTERING else Global.DIRS[dir] * 1.0
+  set_state(next_state)
   if tween: tween.stop()
   if state == State.MOVING:
     tween = create_tween()
-    tween.tween_property(self, 'position', Global.grid2cart(pos), speed)
+    tween.tween_property(self, 'position', Global.grid2cart(pos), Global.tick_speed)
   elif state == State.ABSORBING:
     assert(next_child)
     assert(!is_full())
     absorb(next_child)
-  elif state == State.ENTERING:
-    set_type(type)
-
-  if state == State.TURNING:
-    visual.play(turn_names[(dir + 2) % 4 + type * 4], 1.5)
-  elif state == State.BURSTING:
-    prints('play ', anim_names[type])
-    visual.play(anim_names[type])
   else:
-    set_type(type)
+    _queue_update = true
   if immune != pos:
     immune = Vector2i.ZERO
 
@@ -153,11 +175,9 @@ func merge(b:Bubble)->void:
 
 func absorb(b:Bubble)->void:
   if b.get_parent():
-    b.reparent(sub, false)
+    b.reparent(self, false)
   else:
-    sub.add_child(b)
-  b.scale = Vector2.ONE
-  b.sub.visible = false
+    add_child(b)
   if left == null:
     left = b
   else:
@@ -167,7 +187,3 @@ func absorb(b:Bubble)->void:
 func leave()->void:
   state = Bubble.State.MOVING
   next_state = Bubble.State.MOVING
-  scale = Vector2.ONE
-  rotation_degrees = 0
-  sub.rotation_degrees = 0
-  sub.visible = true

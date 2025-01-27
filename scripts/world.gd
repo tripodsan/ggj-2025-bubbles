@@ -11,8 +11,6 @@ var objects: Node2D
 @onready var floor: TileMapLayer = $level/floor
 @onready var walls: TileMapLayer = $level/walls
 
-var tick_speed:float = 0.4
-
 var bubbles:Array[Bubble] = []
 
 var rocks:Array[Rock] = []
@@ -66,8 +64,8 @@ func load_level(nr:int, scn:PackedScene):
 
 func _process(delta:float)->void:
   time += delta
-  if time < tick_speed: return
-  time -= tick_speed
+  if time < Global.tick_speed: return
+  time -= Global.tick_speed
   do_tick()
 
 func do_tick():
@@ -84,11 +82,11 @@ func do_tick():
 
   # apply
   for b in bubbles:
-    b.apply(tick_speed)
+    b.apply()
     if b.state == Bubble.State.ENTERING:
       bubbles.erase(b)
   for r in rocks:
-    r.apply(tick_speed)
+    r.apply()
     if !is_ground(r.pos):
       rocks.erase(r)
       r.queue_free()
@@ -383,35 +381,6 @@ func release_bubble()->void:
   if s && (s.type == b.type || s.type == Sensor.Type.SENSOR_WHITE):
     s.toggle()
 
-
-func bubble_tree(outer:bool, tree:Dictionary)->Bubble:
-  var color = tree['color']
-  var children = tree['children']
-  var size = children.size()
-  var b0:Bubble = BUBBLE.instantiate()
-  b0.set_type(color)
-  if outer:
-    #b.set_pos(pos)
-    bubbles.append(b0)
-    objects.add_child(b0)
-  if size == 1:
-    var b1:Bubble = bubble_tree(false, children[0])
-    b1.state = Bubble.State.ENTERING
-    b0.absorb(b1)
-  if size == 2:
-    var b1:Bubble = bubble_tree(false, children[0])
-    b1.state = Bubble.State.ENTERING
-    b0.absorb(b1)
-    var b2:Bubble = bubble_tree(false, children[1])
-    b2.state = Bubble.State.ENTERING
-    b0.absorb(b2)
-  return b0
-
-func complex_bubble(pos:Vector2i, tree:Dictionary)->Bubble:
-  var b:Bubble = bubble_tree(true, tree)
-  b.set_pos(pos)
-  return b
-
 func init_level():
   walls = get_node('level/walls')
   floor = get_node('level/floor')
@@ -421,6 +390,10 @@ func init_level():
   sensors.clear()
   doors.clear()
   player.reset()
+  for n:Bubble in get_tree().get_nodes_in_group(&"bubbles"):
+    if n.state != Bubble.State.ENTERING:
+      bubbles.append(n)
+
   for c:Vector2i in walls.get_used_cells():
     var d:TileData = walls.get_cell_tile_data(c)
     var type:StringName = d.get_custom_data("type")
@@ -431,98 +404,6 @@ func init_level():
     elif type == &"bubble":
       create_bubble(c, color)
       walls.set_cell(c, -1)
-    elif type == &"bubble_2":
-      complex_bubble(c, {
-        "color": Bubble.Type.WHITE,
-        "children": [
-          {
-            "color": Bubble.Type.RED,
-            "children": []
-          }, {
-            "color": Bubble.Type.WHITE,
-            "children": []
-          }
-        ]
-      })
-      walls.set_cell(c, -1)
-    elif type == &"bubble_3":
-      complex_bubble(c, {
-        "color": Bubble.Type.WHITE,
-        "children": [
-          {
-            "color": Bubble.Type.RED,
-            "children": []
-          }, {
-            "color": Bubble.Type.GREEN,
-            "children": []
-          }
-        ]
-      })
-      walls.set_cell(c, -1)
-    elif type == &"db_left":
-      var b:Bubble = complex_bubble(c, {
-        "color": Bubble.Type.GREEN,
-        "children": [
-          {
-            "color": Bubble.Type.BLUE,
-            "children": []
-          }, {
-            "color": Bubble.Type.BLUE,
-            "children": []
-          }
-        ]
-      })
-      b.state = Bubble.State.MOVING
-      b.set_dir(2)
-      walls.set_cell(c, -1)
-    elif type == &"db_down":
-      var b:Bubble = complex_bubble(c, {
-        "color": Bubble.Type.GREEN,
-        "children": [
-          {
-            "color": Bubble.Type.BLUE,
-            "children": []
-          }, {
-            "color": Bubble.Type.BLUE,
-            "children": []
-          }
-        ]
-      })
-      b.state = Bubble.State.MOVING
-      b.set_dir(1)
-      walls.set_cell(c, -1)
-    elif type == &"db_right":
-      var b:Bubble = complex_bubble(c, {
-        "color": Bubble.Type.GREEN,
-        "children": [
-          {
-            "color": Bubble.Type.BLUE,
-            "children": []
-          }, {
-            "color": Bubble.Type.BLUE,
-            "children": []
-          }
-        ]
-      })
-      b.state = Bubble.State.MOVING
-      b.set_dir(0)
-      walls.set_cell(c, -1)
-    elif type == &"db_up":
-      var b:Bubble = complex_bubble(c, {
-        "color": Bubble.Type.GREEN,
-        "children": [
-          {
-            "color": Bubble.Type.BLUE,
-            "children": []
-          }, {
-            "color": Bubble.Type.BLUE,
-            "children": []
-          }
-        ]
-      })
-      b.state = Bubble.State.MOVING
-      b.set_dir(3)
-      walls.set_cell(c, -1)
     elif type == &"rock":
       create_rock(c)
       walls.set_cell(c, -1)
@@ -530,3 +411,4 @@ func init_level():
     sensors.append(n)
   for n:Node2D in get_tree().get_nodes_in_group(&"doors"):
     doors.append(n)
+  prints(len(bubbles), 'bubbles')

@@ -23,7 +23,7 @@ var levels = [
   preload("res://levels/level15.tscn")
 ]
 
-const MIN_LEVEL:int = 1
+const MIN_LEVEL:int = 0
 
 func _ready():
   var template:Button

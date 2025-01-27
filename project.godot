@@ -36,6 +36,7 @@ window/stretch/mode="canvas_items"
 
 sensors=""
 doors=""
+bubbles=""
 
 [input]
 

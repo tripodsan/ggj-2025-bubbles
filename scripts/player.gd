@@ -16,9 +16,6 @@ func set_dir(v:int):
   visual.rotation_degrees = dir * 90
   visual.flip_v = dir != 0
 
-func move_to(v:Vector2):
-  pos = v
-
 func set_pos(v:Vector2):
   pos = v
   transform.origin = Global.grid2cart(v)

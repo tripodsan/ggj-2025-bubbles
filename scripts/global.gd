@@ -16,6 +16,8 @@ const DIRS = [
   Vector2i(0, -1), # up
 ]
 
+var tick_speed := 0.4
+
 static func grid2cart(pos:Vector2i)->Vector2:
   return Vector2(pos.x * GRID_DX + GRID_DX2, pos.y * GRID_DY + GRID_DY2)
 

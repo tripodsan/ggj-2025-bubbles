@@ -10,11 +10,16 @@ var pos:Vector2i
 var next_pos:Vector2i
 
 ## direction
-var dir:int = 0
+@export
+var dir:Global.DIR = 0: set = set_dir
+
+## internal flag indicating that the visual needs updating.
+var _queue_update:bool = false
 
 var next_dir:int = 0
 
 func _ready() -> void:
+  _queue_update = true
   if !Engine.is_editor_hint():
     pos = Global.cart2grid(position)
 
@@ -24,9 +29,11 @@ func reset():
   next_dir = dir
 
 func set_dir(v:int):
-  dir = v
+  if dir != v:
+    dir = v
+    _queue_update = true
 
-func apply(speed:float):
+func apply():
   pos = next_pos
   dir = next_dir
 
