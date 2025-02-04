@@ -1134,9 +1134,11 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="bubble" type="Node2D" groups=["bubbles"]]
+[node name="bubble" type="Node2D" groups=["bubbles", "cells"]]
 texture_filter = 1
 script = ExtResource("1_n2mqj")
+state = null
+dir = null
 
 [node name="visual" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_o6lp5")

@@ -167,6 +167,7 @@ texture = ExtResource("1_2urvg")
 3:9/0 = 0
 3:9/0/custom_data_0 = &"h_door"
 0:10/0 = 0
+0:10/0/custom_data_0 = &"kelp"
 1:10/0 = 0
 1:10/0/custom_data_0 = &"goal"
 2:10/0 = 0

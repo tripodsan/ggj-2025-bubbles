@@ -4,8 +4,6 @@ extends Cell
 
 @onready var visual: AnimatedSprite2D = $visual
 
-enum State { IDLE, MOVING, TURNING, ABSORBING, ENTERING, BURSTING }
-
 enum Type { WHITE, RED, GREEN, BLUE }
 
 var anim_names = [
@@ -41,11 +39,6 @@ var turn_names = [
 @export
 var type:Type = Type.WHITE: set = set_type
 
-@export
-var state:State = State.IDLE: set = set_state
-
-var next_state:State = State.IDLE
-
 var next_child:Bubble
 
 var left:Bubble
@@ -60,6 +53,10 @@ static func type_from_color(s:String)->Bubble.Type:
 
 func _ready():
   super()
+  is_movable = false
+  is_solid = false
+  is_heavy = false
+
   register_child_bubbles()
   _queue_update = true
 
@@ -76,13 +73,6 @@ func register_child_bubbles():
       if left == null: left = n
       else: right = n
 
-func reset():
-  processed = false
-  next_pos = pos
-  next_dir = dir
-  next_state = state
-  next_child = null
-
 func _process(_d)->void:
   if !_queue_update: return
   _queue_update = false
@@ -94,7 +84,7 @@ func _process(_d)->void:
     State.ENTERING:
       visual.animation = anim_names[type + 4]
       visual.stop()
-    State.TURNING:
+    State.BOUNCING:
       visual.play(turn_names[(dir + 2) % 4 + type * 4], 1.0 / Global.tick_speed)
     State.BURSTING:
       visual.play(anim_names[type])
@@ -103,11 +93,6 @@ func _process(_d)->void:
 func set_type(t:Type)->void:
   type = t
   _queue_update = true
-
-func set_state(s:State)->void:
-  if state != s:
-    state = s
-    _queue_update = true
 
 func is_full()->bool:
   return right != null
@@ -146,9 +131,9 @@ func apply():
 
 
 ## sets the next direction and state to make the bubble turn
-func turn()->void:
+func bounce()->void:
   next_dir = (dir + 2) % 4
-  next_state = State.TURNING
+  next_state = State.BOUNCING
 
 func is_stationary()->bool:
   return state != State.MOVING

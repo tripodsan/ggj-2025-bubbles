@@ -279,10 +279,64 @@ text = "QUIT LEVEL"
 [node name="world" type="Node2D" parent="."]
 unique_name_in_owner = true
 process_mode = 1
-visible = false
 script = ExtResource("1_h2yge")
 
 [node name="level" parent="world" instance=ExtResource("5_272bh")]
+
+[node name="sensor" parent="world/level" index="3"]
+state = null
+dir = null
+
+[node name="sensor6" parent="world/level" index="4"]
+state = null
+dir = null
+
+[node name="sensor2" parent="world/level" index="6"]
+state = null
+dir = null
+
+[node name="sensor3" parent="world/level" index="7"]
+state = null
+dir = null
+
+[node name="sensor4" parent="world/level" index="8"]
+state = null
+dir = null
+
+[node name="sensor5" parent="world/level" index="9"]
+state = null
+dir = null
+
+[node name="whte1" parent="world/level" index="10"]
+state = null
+dir = null
+
+[node name="red" parent="world/level" index="11"]
+state = null
+dir = null
+
+[node name="blue" parent="world/level" index="12"]
+state = null
+dir = null
+
+[node name="white" parent="world/level" index="13"]
+state = null
+dir = null
+
+[node name="red" parent="world/level/white" index="1"]
+position = Vector2(0, -2)
+state = null
+dir = null
+
+[node name="green" parent="world/level/white" index="2"]
+position = Vector2(0, 2)
+state = null
+dir = null
+
+[node name="whte2" parent="world/level/white/green" index="1"]
+visible = true
+state = null
+dir = null
 
 [node name="player" type="Node2D" parent="world"]
 unique_name_in_owner = true

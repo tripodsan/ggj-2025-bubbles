@@ -11,19 +11,13 @@ var objects: Node2D
 @onready var floor: TileMapLayer = $level/floor
 @onready var walls: TileMapLayer = $level/walls
 
-var bubbles:Array[Bubble] = []
-
-var rocks:Array[Rock] = []
+var cells:Array[Cell] = []
 
 var sensors:Array[Sensor] = []
-
-var doors:Array[Door] = []
 
 var time:float = 0
 
 var ticks:int = 0
-
-var pending_move:bool = false
 
 var corner_matrix = [
   [1, 1, 2, 2],
@@ -48,7 +42,14 @@ func _unhandled_input(event:InputEvent)->void:
   if event.is_action_pressed('move_left'):
     player_move(Global.DIR.LEFT)
   if event.is_action_pressed('shoot'):
-    release_bubble()
+    shoot_bubble()
+  if event.is_action_pressed('wait'):
+    tick()
+
+func player_move(dir:int):
+  player.input_dir = dir
+  tick()
+
 
 func load_level(nr:int, scn:PackedScene):
   current_level_scn = scn
@@ -66,85 +67,74 @@ func _process(delta:float)->void:
   time += delta
   if time < Global.tick_speed: return
   time -= Global.tick_speed
-  do_tick()
+  #do_tick()
 
-func do_tick():
-  #prints('tick', ticks)
+func tick():
   ticks += 1
-  # reset
-  for b in rocks:
-    b.reset()
-  for b in bubbles:
-    b.reset()
-  # calculate next state
-  for b in bubbles:
-    tick(b)
+  prints(ticks)
+  for c in cells:
+    if c.state == Cell.State.REMOVED:
+      c.queue_free()
+      cells.erase(c)
+    else:
+      c.prepare_tick(self)
 
-  # apply
-  for b in bubbles:
-    b.apply()
-    if b.state == Bubble.State.ENTERING:
-      bubbles.erase(b)
-  for r in rocks:
-    r.apply()
-    if !is_ground(r.pos):
-      rocks.erase(r)
-      r.queue_free()
+  for c in cells:
+    c.tick_move(self)
 
-  update_sensors()
+  for c in cells:
+    c.tick(self)
 
-func update_sensors():
-  for r in rocks:
-    var s:Sensor = get_sensor(r.pos)
-    if s && s.type == Sensor.Type.PLATE:
-      s.trigger_node = r
-      s.activate(true)
-  for b in bubbles:
-    var s:Sensor = get_sensor(b.pos)
-    if s:
-      if s.type == b.type || s.type == Sensor.Type.SENSOR_WHITE:
-        s.toggle()
+  for c in cells:
+    c.apply_tick(self)
 
-  for s in sensors:
-    if s.active && s.trigger_node && s.trigger_node.pos != s.pos:
-      s.activate(false)
-      s.trigger_node = null
+  check_goal()
+#func update_sensors():
+  #for r in rocks:
+    #var s:Sensor = get_sensor(r.pos)
+    #if s && s.type == Sensor.Type.PLATE:
+      #s.trigger_node = r
+      #s.activate(true)
+  #for b in bubbles:
+    #var s:Sensor = get_sensor(b.pos)
+    #if s:
+      #if s.type == b.type || s.type == Sensor.Type.SENSOR_WHITE:
+        #s.toggle()
+#
+  #for s in sensors:
+    #if s.active && s.trigger_node && s.trigger_node.pos != s.pos:
+      #s.activate(false)
+      #s.trigger_node = null
+
+
 
 func goal_reached():
   await get_tree().create_timer(0.5).timeout
   Global.level_complete.emit()
 
 
-func tick_player(dir:int):
-  var pos:Vector2 = player.pos + Global.DIRS[dir]
-  var type:StringName = get_type(pos)
+func check_goal():
+  var type:StringName = get_type(player.pos)
   if type == &"goal":
-    walls.set_cell(pos, -1)
-    player.dir = dir
-    player.pos = pos
+    walls.set_cell(player.pos, -1)
     goal_reached()
+    return
 
-  if walls.get_cell_tile_data(pos) != null: return
-  if !is_ground(pos): return
-  if is_closed_door(pos): return
-  var r:Rock = get_rock(pos)
-  if r != null:
-    var next_rock_pos:Vector2i = r.pos + Global.DIRS[dir]
-    if !can_move_rock(next_rock_pos): return
-    if get_bubble(next_rock_pos, null): return
-    r.set_pos(next_rock_pos)
-  var b:Bubble = get_bubble(pos, null)
-  if b:
-    pickup_bubble(b)
+  #if walls.get_cell_tile_data(pos) != null: return
+  #if !is_ground(pos): return
+  #if is_closed_door(pos): return
+  #var r:Rock = get_rock(pos)
+  #if r != null:
+    #var next_rock_pos:Vector2i = r.pos + Global.DIRS[dir]
+    #if !can_move_rock(next_rock_pos): return
+    #if get_bubble(next_rock_pos, null): return
+    #r.set_pos(next_rock_pos)
+  #var b:Bubble = get_bubble(pos, null)
+  #if b:
+    #pickup_bubble(b)
 
-  player.dir = dir
-  player.pos = pos
-
-func pickup_bubble(b:Bubble):
-  if player.push_bubble(b):
-    bubbles.erase(b)
-    b.visible = false
-    player.push_bubble(b)
+  #player.dir = dir
+  #player.pos = pos
 
 func is_ground(pos:Vector2i)->bool:
   var c:TileData = floor.get_cell_tile_data(pos)
@@ -157,34 +147,45 @@ func get_sensor(pos:Vector2i)->Sensor:
   return null
 
 func is_closed_door(pos:Vector2i)->bool:
-  for s:Door in doors:
-    if s.pos == pos: return !s.open
+  #for s:Door in doors:
+    #if s.pos == pos: return !s.open
   return false
 
-func get_bubble(pos:Vector2i, ignored:Bubble)->Bubble:
-  for b:Bubble in bubbles:
-    if b != ignored && b.pos == pos: return b
-  return null
+func get_cell(pos:Vector2i, ignored:Cell)->Cell:
+  var found:Cell = null
+  for c:Cell in cells:
+    if c != ignored && c.pos == pos:
+      if !found || found is Door: # ignore door, if something else on top
+        found = c
+  return found
+
+func get_next_cell(pos:Vector2i, ignored:Cell)->Cell:
+  var found:Cell = null
+  for c:Cell in cells:
+    if c != ignored && c.next_pos == pos:
+      if !found || found is Door: # ignore door, if something else on top
+        found = c
+  return found
 
 func can_move_rock(pos:Vector2i)->bool:
   if walls.get_cell_tile_data(pos) != null: return false
   if is_closed_door(pos): return false
   if get_rock(pos): return false
-  if get_bubble(pos, null): return false
+  #if get_bubble(pos, null): return false
   return true
 
 func get_rock(pos:Vector2i)->Rock:
-  for r:Rock in rocks:
-    if r.pos == pos: return r
+  #for r:Rock in rocks:
+    #if r.pos == pos: return r
   return null
 
 func get_next_bubble(pos:Vector2i, ignored:Bubble)->Bubble:
-  for b:Bubble in bubbles:
-    if b != ignored && b.next_pos == pos: return b
+  #for b:Bubble in bubbles:
+    #if b != ignored && b.next_pos == pos: return b
   return null
 
 func burst_bubble(b:Bubble)->void:
-  bubbles.erase(b)
+  cells.erase(b)
   b.queue_free()
   if b.left == null: return
   var l = b.left
@@ -193,12 +194,12 @@ func burst_bubble(b:Bubble)->void:
   l.leave()
   l.set_pos(b.pos)
   l.immune = b.pos
-  bubbles.append(l)
+  cells.append(l)
   if b.right == null:
     # only 1 bubble
     l.dir = b.dir
     l.next_dir = b.dir
-    tick(l)
+    _old_tick(l)
   else:
     var r = b.right
     r.processed = false
@@ -206,7 +207,7 @@ func burst_bubble(b:Bubble)->void:
     r.leave()
     r.set_pos(b.pos)
     r.immune = b.pos
-    bubbles.append(r)
+    cells.append(r)
     var tick_dir = int(get_color_type(b.pos))
     # if hit opposite:
     if b.dir == (tick_dir + 2) % 4:
@@ -225,14 +226,14 @@ func burst_bubble(b:Bubble)->void:
         r.next_dir = r.dir
         l.dir = tick_dir
         l.next_dir = l.dir
-    tick(r)
-    tick(l)
+    _old_tick(r)
+    _old_tick(l)
 
-func tick(b:Bubble):
+func _old_tick(b:Bubble):
   if b.processed: return
   b.processed = true
-  if b.pos == player.pos:
-    pickup_bubble(b)
+  #if b.pos == player.pos:
+    #pickup_bubble(b)
 
   if b.state == Bubble.State.IDLE:
     return
@@ -261,7 +262,7 @@ func tick(b:Bubble):
       b.next_dir = b.dir
       #return
     # check if another bubble is on this pos
-    var c:Bubble = get_bubble(b.pos, b)
+    var c:Bubble = get_cell(b.pos, b)
     if c && b.immune != b.pos:
       c.processed = true
       var p:Bubble = b.can_merge(c)
@@ -305,13 +306,13 @@ func tick(b:Bubble):
         b.turn()
       return
 
-    c = get_bubble(next_pos, b)
+    c = get_cell(next_pos, b)
     if c == null:
       b.next_pos = next_pos
       return
 
     if !c.processed:
-      tick(c)
+      _old_tick(c)
     if c.next_state == Bubble.State.MOVING && c.next_pos != next_pos:
       b.next_pos = next_pos
       return
@@ -333,10 +334,6 @@ func tick(b:Bubble):
     # continue and check in next tick
     b.next_pos = next_pos
 
-func player_move(dir:int):
-  pending_move = true
-  tick_player(dir)
-
 func get_type(pos:Vector2i)->StringName:
   var d:TileData = walls.get_cell_tile_data(pos)
   if !d: return &""
@@ -348,22 +345,8 @@ func get_color_type(pos:Vector2i)->StringName:
   if !d: return &""
   return d.get_custom_data("color")
 
-func create_bubble(pos:Vector2i, type:Bubble.Type)->Bubble:
-  var b:Bubble = BUBBLE.instantiate()
-  b.set_pos(pos)
-  b.set_type(type)
-  bubbles.append(b)
-  objects.add_child(b)
-  return b
 
-func create_rock(pos:Vector2i)->Rock:
-  var b:Rock = ROCK.instantiate()
-  b.set_pos(pos)
-  rocks.append(b)
-  objects.add_child(b)
-  return b
-
-func release_bubble()->void:
+func shoot_bubble()->void:
   var pos = player.pos + Global.DIRS[player.dir]
   var type:StringName = get_type(pos)
   if type != &"" and type != &"spike" and type != &"corner": return
@@ -372,7 +355,7 @@ func release_bubble()->void:
 
   var b:Bubble = player.pop_bubble()
   if b == null: return
-  bubbles.append(b)
+  cells.append(b)
   b.visible = true
   b.set_pos(pos)
   b.set_dir(player.dir)
@@ -381,25 +364,46 @@ func release_bubble()->void:
   if s && (s.type == b.type || s.type == Sensor.Type.SENSOR_WHITE):
     s.toggle()
 
+# --- level init -----------------------------------------------------------------------
+
+func create_bubble(pos:Vector2i, type:Bubble.Type)->Bubble:
+  var b:Bubble = BUBBLE.instantiate()
+  b.set_pos(pos)
+  b.set_type(type)
+  cells.append(b)
+  objects.add_child(b)
+  return b
+
+func create_rock(pos:Vector2i)->Rock:
+  var b:Rock = ROCK.instantiate()
+  b.set_pos(pos)
+  cells.append(b)
+  objects.add_child(b)
+  return b
+
 func init_level():
   walls = get_node('level/walls')
   floor = get_node('level/floor')
-  ## objects and start position from walls
-  bubbles.clear()
-  rocks.clear()
+  cells.clear()
+  # make player the first cell
+  cells.append(player)
   sensors.clear()
-  doors.clear()
   player.reset()
-  for n:Bubble in get_tree().get_nodes_in_group(&"bubbles"):
-    if n.state != Bubble.State.ENTERING:
-      bubbles.append(n)
+
+  for n:Cell in get_tree().get_nodes_in_group(&"cells"):
+    if n is Bubble && n.state == Bubble.State.ENTERING:
+      # ignore sub-bubble
+      continue;
+    cells.append(n)
+  for n:Sensor in get_tree().get_nodes_in_group(&"sensors"):
+    sensors.append(n)
 
   for c:Vector2i in walls.get_used_cells():
     var d:TileData = walls.get_cell_tile_data(c)
     var type:StringName = d.get_custom_data("type")
     var color:Bubble.Type = Bubble.type_from_color(d.get_custom_data("color"))
     if type == &"start":
-      player.pos = c
+      player.set_pos(c)
       walls.set_cell(c, -1)
     elif type == &"bubble":
       create_bubble(c, color)
@@ -407,8 +411,3 @@ func init_level():
     elif type == &"rock":
       create_rock(c)
       walls.set_cell(c, -1)
-  for n:Node2D in get_tree().get_nodes_in_group(&"sensors"):
-    sensors.append(n)
-  for n:Node2D in get_tree().get_nodes_in_group(&"doors"):
-    doors.append(n)
-  prints(len(bubbles), 'bubbles')

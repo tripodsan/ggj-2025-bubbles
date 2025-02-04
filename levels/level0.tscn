@@ -28,10 +28,14 @@ metadata/_edit_lock_ = true
 [node name="sensor" parent="." instance=ExtResource("2_rqr14")]
 position = Vector2(120, 40)
 type = 4
+state = null
+dir = null
 
 [node name="sensor6" parent="." instance=ExtResource("2_rqr14")]
 position = Vector2(152, 40)
 type = 4
+state = null
+dir = null
 
 [node name="door" parent="." instance=ExtResource("3_2etfj")]
 position = Vector2(104, 88)
@@ -43,47 +47,63 @@ targets = [NodePath("../../sensor"), NodePath("../../sensor6")]
 [node name="sensor2" parent="." instance=ExtResource("2_rqr14")]
 position = Vector2(264, 104)
 type = 1
+state = null
+dir = null
 
 [node name="sensor3" parent="." instance=ExtResource("2_rqr14")]
 position = Vector2(264, 88)
 active = true
 type = 2
+state = null
+dir = null
 
 [node name="sensor4" parent="." instance=ExtResource("2_rqr14")]
 position = Vector2(264, 72)
 type = 3
+state = null
+dir = null
 
 [node name="sensor5" parent="." instance=ExtResource("2_rqr14")]
 position = Vector2(264, 120)
+state = null
+dir = null
 
 [node name="whte1" parent="." instance=ExtResource("5_2etfj")]
 position = Vector2(40, 40)
+state = null
+dir = null
 
 [node name="red" parent="." instance=ExtResource("5_2etfj")]
 position = Vector2(40, 56)
 type = 1
+state = null
+dir = null
 
 [node name="blue" parent="." instance=ExtResource("5_2etfj")]
 position = Vector2(40, 88)
 type = 3
-state = 1
-dir = 2
+state = null
+dir = null
 
 [node name="white" parent="." instance=ExtResource("5_2etfj")]
 position = Vector2(248, 40)
-dir = 2
+state = null
+dir = null
 
 [node name="red" parent="white" instance=ExtResource("5_2etfj")]
 position = Vector2(0, 2)
 type = 1
-state = 4
+state = null
+dir = null
 
 [node name="green" parent="white" instance=ExtResource("5_2etfj")]
 position = Vector2(0, -2)
 type = 2
-state = 4
+state = null
+dir = null
 
 [node name="whte2" parent="white/green" instance=ExtResource("5_2etfj")]
 visible = false
 type = 3
-state = 4
+state = null
+dir = null

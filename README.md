@@ -58,5 +58,3 @@ Böble is played on a grid with equally sized, square tiles. The grid can contai
 
 ### sensors
 - trigger doors
-
-

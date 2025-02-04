@@ -72,7 +72,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="door" type="Node2D" groups=["doors"]]
+[node name="door" type="Node2D" groups=["cells", "doors"]]
 script = ExtResource("1_v6xrn")
 
 [node name="visual" type="AnimatedSprite2D" parent="."]

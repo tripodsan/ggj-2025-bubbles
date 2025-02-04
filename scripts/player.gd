@@ -1,33 +1,54 @@
 class_name Player
-extends Node2D
+extends Cell
 
 @onready var visual: Sprite2D = $visual
 
-## position in grid
-var pos:Vector2i: set = set_pos
+## the bubble the player is holding
+var bubble:Bubble
 
-## direction
-var dir:int = 0: set = set_dir
-
-var stack:Array[Bubble] = []
+## desired direction tp move
+var input_dir:int = -1
 
 func set_dir(v:int):
-  dir = v
+  super(v)
   visual.rotation_degrees = dir * 90
   visual.flip_v = dir != 0
 
-func set_pos(v:Vector2):
-  pos = v
-  transform.origin = Global.grid2cart(v)
-
 func pop_bubble()->Bubble:
-  return stack.pop_back()
+  var ret:Bubble = bubble
+  bubble = null
+  return ret
+
+func can_pickup()->bool:
+  return bubble == null
 
 func push_bubble(b:Bubble)->bool:
-  if stack.is_empty():
-    stack.append(b)
-    return true
-  return false
+  if bubble == null:
+    return false
+  bubble = b
+  return true
 
 func reset():
-  stack.clear()
+  bubble = null
+
+func tick_pickup(world:World, b:Bubble)->void:
+  if bubble:
+    tick_stop()
+  else:
+    world.cells.erase(b)
+    b.processed = true
+    b.next_state = State.IDLE
+    b.visible = false
+    bubble = b
+
+func prepare_tick(world:World)->void:
+  super(world)
+  if input_dir >= 0:
+    state = State.MOVING
+    next_dir = input_dir
+    input_dir = -1
+
+func apply_tick(world:World)->void:
+  super(world)
+  # player only moves 1 tile
+  state = State.IDLE

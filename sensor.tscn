@@ -128,6 +128,8 @@ animations = [{
 
 [node name="sensor" type="Node2D" groups=["sensors"]]
 script = ExtResource("1_4bfv1")
+state = null
+dir = null
 
 [node name="visual" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_w6ewo")
