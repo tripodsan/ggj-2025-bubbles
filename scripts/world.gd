@@ -72,9 +72,12 @@ func _process(delta:float)->void:
 func tick():
   ticks += 1
   prints(ticks)
-  for c in cells:
+
+  for c in cells.duplicate():
     if c.state == Cell.State.REMOVED:
       c.queue_free()
+      cells.erase(c)
+    elif c.state == Cell.State.ENTERING:
       cells.erase(c)
     else:
       c.prepare_tick(self)

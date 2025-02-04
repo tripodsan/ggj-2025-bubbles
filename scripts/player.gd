@@ -9,6 +9,12 @@ var bubble:Bubble
 ## desired direction tp move
 var input_dir:int = -1
 
+func _ready():
+  super()
+  is_movable = false
+  is_solid = false
+  is_heavy = true
+
 func set_dir(v:int):
   super(v)
   visual.rotation_degrees = dir * 90
@@ -18,9 +24,6 @@ func pop_bubble()->Bubble:
   var ret:Bubble = bubble
   bubble = null
   return ret
-
-func can_pickup()->bool:
-  return bubble == null
 
 func push_bubble(b:Bubble)->bool:
   if bubble == null:
@@ -33,11 +36,14 @@ func reset():
 
 func tick_pickup(world:World, b:Bubble)->void:
   if bubble:
-    tick_stop()
+    if b.state == Cell.State.MOVING:
+      b.tick_stop()
+      b.bounce()
+    else:
+      tick_stop()
   else:
-    world.cells.erase(b)
     b.processed = true
-    b.next_state = State.IDLE
+    b.next_state = State.ENTERING
     b.visible = false
     bubble = b
 

@@ -112,7 +112,55 @@ func recalc_sub()->void:
     left.position = -Global.DIRS[(dir + 1)%4] * 2
     right.position = Global.DIRS[(dir + 1)%4] * 2
 
-func apply():
+func prepare_tick(world:World)->void:
+  if state == State.BOUNCING || state == State.ABSORBING:
+    state = State.MOVING
+  super(world)
+  next_child = null
+
+## special tick for bubble, because it is so special
+func tick(world:World)->void:
+  if processed: return
+  processed = true
+  if state == State.MOVING:
+    var c:Cell = world.get_next_cell(next_pos, self)
+    if !c: return
+    c.processed = true
+    # special case: player
+    if c is Player:
+      (c as Player).tick_pickup(world, self)
+      return
+    if c is Bubble:
+      # check winning bubble
+      var wb:Bubble = can_merge(c)
+      if wb == null:
+        bounce()
+        c.bounce()
+      elif wb == self:
+        tick_merge(c)
+      else:
+        c.tick_merge(self)
+      return
+
+    if c.state == State.MOVING:
+      # should not happen. no other moving cells
+      return
+    if c.is_movable:
+      # check if the movable can be pushed to the new place
+      c.next_pos  = c.pos + Global.DIRS[next_dir]
+      c.next_dir = next_dir
+      c.processed = true
+      tick_stop()
+      if c.is_blocked(world, c.next_pos):
+        c.tick_stop()
+        bounce()
+      return
+
+    bounce()
+
+
+func apply_tick(world):
+  # don't call super, as we don't want to set_pos auto update
   pos = next_pos
   set_dir(next_dir)
   set_state(next_state)
@@ -151,7 +199,7 @@ func can_merge(b:Bubble)->Bubble:
     return b
   return self if get_num_children() < b.get_num_children() else b
 
-func merge(b:Bubble)->void:
+func tick_merge(b:Bubble)->void:
   next_state = State.ABSORBING
   b.next_state = State.ENTERING
   next_child = b
