@@ -20,10 +20,11 @@ metadata/_edit_lock_ = true
 position = Vector2(88, 104)
 type = 3
 state = 1
+dir = 3
 
 [node name="white" parent="." instance=ExtResource("2_i7n1o")]
-position = Vector2(40, 104)
-dir = 2
+position = Vector2(56, 72)
+state = 1
 metadata/_edit_group_ = true
 
 [node name="red" parent="white" instance=ExtResource("2_i7n1o")]

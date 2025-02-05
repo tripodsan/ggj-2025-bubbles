@@ -44,6 +44,9 @@ var next_child:Bubble
 var left:Bubble
 var right:Bubble
 
+# special flag when 2 bubbles bounce over the same cell
+var half_step:bool = false
+
 var immune:Vector2i
 
 var tween:Tween
@@ -86,8 +89,17 @@ func _process(_d)->void:
       visual.stop()
     State.BOUNCING:
       visual.play(turn_names[(dir + 2) % 4 + type * 4], 1.0 / Global.tick_speed)
+      # add hack for missing bouncing anim
+      if half_step:
+        visual.animation_finished.connect(reset_half, CONNECT_ONE_SHOT)
     State.BURSTING:
       visual.play(anim_names[type])
+  visual.position = -Global.DIRS[dir] * 8 if half_step else Vector2.ZERO
+  recalc_sub()
+
+func reset_half()->void:
+  half_step = false
+  visual.position = Vector2.ZERO
   recalc_sub()
 
 func set_type(t:Type)->void:
@@ -106,17 +118,18 @@ func recalc_sub()->void:
   left.visible = state != State.ENTERING
   if right == null:
     # hide children if we are inside a bubble
-    left.position = Vector2.ZERO
+    left.position = -Global.DIRS[dir] * 8 if half_step else Vector2.ZERO
   else:
     right.visible = state != State.ENTERING
-    left.position = -Global.DIRS[(dir + 1)%4] * 2
-    right.position = Global.DIRS[(dir + 1)%4] * 2
+    left.position = -Global.DIRS[(dir + 1)%4] * 2 - (Global.DIRS[dir] * 8 if half_step else Vector2i.ZERO)
+    right.position = Global.DIRS[(dir + 1)%4] * 2 - (Global.DIRS[dir] * 8 if half_step else Vector2i.ZERO)
 
 func prepare_tick(world:World)->void:
   if state == State.BOUNCING || state == State.ABSORBING:
     state = State.MOVING
   super(world)
   next_child = null
+  half_step = false
 
 
 func tick_impulse(world:World, c:Cell)->void:
@@ -139,15 +152,21 @@ func tick_impulse(world:World, c:Cell)->void:
       c.tick_stop()
       bounce()
 
-
-
 ## special tick for bubble, because it is so special
 func tick(world:World)->void:
   if processed: return
   processed = true
   if state == State.MOVING:
     var c:Cell = world.get_next_cell(next_pos, self)
-    if !c: return
+    if !c:
+      c = is_swap(world)
+      if c is Bubble:
+        tick_stop()
+        bounce()
+        c.tick_stop()
+        c.bounce()
+      return
+
     c.processed = true
     # special case: player
     if c is Player:
@@ -160,9 +179,10 @@ func tick(world:World)->void:
         if c.is_stationary():
           tick_impulse(world, c)
         else:
-          bounce()
-          c.bounce()
-
+          tick_stop()
+          bounce(true)
+          c.tick_stop()
+          c.bounce(true)
       elif wb == self:
         tick_merge(c)
       else:
@@ -181,17 +201,16 @@ func tick(world:World)->void:
 
 func apply_tick(world):
   # don't call super, as we don't want to set_pos auto update
+  var moved:bool = pos != next_pos && (next_state == State.MOVING || next_state == State.ABSORBING)
   pos = next_pos
   set_dir(next_dir)
   set_state(next_state)
   if tween: tween.stop()
-  if state == State.MOVING:
+  if moved:
     tween = create_tween()
     tween.tween_property(self, 'position', Global.grid2cart(pos), Global.tick_speed)
-  elif state == State.ABSORBING:
-    assert(next_child)
-    assert(!is_full())
-    absorb(next_child)
+  if state == State.ABSORBING:
+    _absorb()
   else:
     _queue_update = true
   if immune != pos:
@@ -199,9 +218,10 @@ func apply_tick(world):
 
 
 ## sets the next direction and state to make the bubble turn
-func bounce()->void:
+func bounce(half:bool = false)->void:
   next_dir = (dir + 2) % 4
   next_state = State.BOUNCING
+  half_step = half
 
 func is_stationary()->bool:
   return state != State.MOVING
@@ -226,15 +246,18 @@ func tick_merge(b:Bubble)->void:
   if is_stationary():
     next_dir = b.dir
 
-func absorb(b:Bubble)->void:
-  if b.get_parent():
-    b.reparent(self, false)
+func _absorb()->void:
+  assert(next_child)
+  assert(!is_full())
+  if next_child.get_parent():
+    next_child.reparent(self, false)
   else:
-    add_child(b)
+    add_child(next_child)
   if left == null:
-    left = b
+    left = next_child
   else:
-    right = b
+    right = next_child
+  next_child = null
   recalc_sub()
 
 func leave()->void:

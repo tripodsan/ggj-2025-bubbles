@@ -36,7 +36,7 @@ func reset():
 
 func tick_pickup(world:World, b:Bubble)->bool:
   if bubble:
-    if b.state == Cell.State.MOVING:
+    if b.next_state == Cell.State.MOVING:
       b.tick_stop()
       b.bounce()
     else:

@@ -97,6 +97,15 @@ func tick_move(world:World)->void:
         (self as Bubble).bounce()
       processed = true
 
+
+# check if a cell at next_pos swapped place with this cell at pos
+func is_swap(world:World)->Cell:
+  ## get cell at our previous location
+  var c:Cell = world.get_next_cell(pos, self)
+  ## if the cells previous pos is this cells next_pos, they swapped
+  if c && c.pos == next_pos: return c
+  return null
+
 ## updates the state and validates new positions
 func tick(world:World)->void:
   if processed: return
@@ -110,8 +119,16 @@ func tick(world:World)->void:
     return
   if state == State.MOVING:
     var c:Cell = world.get_next_cell(next_pos, self)
-    if !c: return
+    if !c:
+      c = is_swap(world)
+      if c is Bubble: # currently only bubbles can swap
+        c.processed = true
+        if !(self as Player).tick_pickup(world, c):
+          tick_stop()
+          return
+      return
     # special case: player and bubble
+    c.processed = true
     if self is Player and c is Bubble:
       (self as Player).tick_pickup(world, c)
       return

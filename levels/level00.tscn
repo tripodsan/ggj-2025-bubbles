@@ -22,6 +22,16 @@ position = Vector2(200, 120)
 [node name="whte3" parent="." instance=ExtResource("5_mll6j")]
 position = Vector2(152, 120)
 
+[node name="whte4" parent="." instance=ExtResource("5_mll6j")]
+position = Vector2(120, 136)
+state = 1
+dir = 3
+
+[node name="whte5" parent="." instance=ExtResource("5_mll6j")]
+position = Vector2(104, 120)
+state = 1
+dir = 3
+
 [node name="whte2" parent="." instance=ExtResource("5_mll6j")]
 position = Vector2(248, 72)
 type = 1
@@ -39,6 +49,18 @@ dir = 1
 
 [node name="blue2" parent="." instance=ExtResource("5_mll6j")]
 position = Vector2(152, 72)
+type = 3
+state = 1
+dir = 1
+
+[node name="blue4" parent="." instance=ExtResource("5_mll6j")]
+position = Vector2(120, 72)
+type = 3
+state = 1
+dir = 1
+
+[node name="blue5" parent="." instance=ExtResource("5_mll6j")]
+position = Vector2(104, 72)
 type = 3
 state = 1
 dir = 1

@@ -283,61 +283,6 @@ script = ExtResource("1_h2yge")
 
 [node name="level" parent="world" instance=ExtResource("5_272bh")]
 
-[node name="sensor" parent="world/level" index="3"]
-state = 0
-dir = 0
-
-[node name="sensor6" parent="world/level" index="4"]
-state = 0
-dir = 0
-
-[node name="sensor2" parent="world/level" index="6"]
-state = 0
-dir = 0
-
-[node name="sensor3" parent="world/level" index="7"]
-state = 0
-dir = 0
-
-[node name="sensor4" parent="world/level" index="8"]
-state = 0
-dir = 0
-
-[node name="sensor5" parent="world/level" index="9"]
-state = 0
-dir = 0
-
-[node name="whte1" parent="world/level" index="10"]
-state = 0
-dir = 0
-
-[node name="red" parent="world/level" index="11"]
-state = 0
-dir = 0
-
-[node name="blue" parent="world/level" index="12"]
-state = 0
-dir = 0
-
-[node name="white" parent="world/level" index="13"]
-state = 0
-dir = 0
-
-[node name="red" parent="world/level/white" index="1"]
-position = Vector2(0, -2)
-state = 0
-dir = 0
-
-[node name="green" parent="world/level/white" index="2"]
-position = Vector2(0, 2)
-state = 0
-dir = 0
-
-[node name="whte2" parent="world/level/white/green" index="1"]
-visible = true
-state = 0
-dir = 0
-
 [node name="player" type="Node2D" parent="world"]
 unique_name_in_owner = true
 script = ExtResource("2_h2yge")

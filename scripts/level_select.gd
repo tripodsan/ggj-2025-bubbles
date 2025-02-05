@@ -5,7 +5,7 @@ extends MarginContainer
 @onready var levels_grid: GridContainer = %levels_grid
 
 var levels = [
-  preload("res://levels/level00.tscn"),
+  preload("res://levels/level000.tscn"),
   preload("res://levels/level1.tscn"),
   preload("res://levels/level2.tscn"),
   preload("res://levels/level3.tscn"),
