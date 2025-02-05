@@ -34,18 +34,20 @@ func push_bubble(b:Bubble)->bool:
 func reset():
   bubble = null
 
-func tick_pickup(world:World, b:Bubble)->void:
+func tick_pickup(world:World, b:Bubble)->bool:
   if bubble:
     if b.state == Cell.State.MOVING:
       b.tick_stop()
       b.bounce()
     else:
       tick_stop()
+    return false
   else:
     b.processed = true
     b.next_state = State.ENTERING
     b.visible = false
     bubble = b
+    return true
 
 func prepare_tick(world:World)->void:
   super(world)

@@ -118,6 +118,29 @@ func prepare_tick(world:World)->void:
   super(world)
   next_child = null
 
+
+func tick_impulse(world:World, c:Cell)->void:
+  # check if the movable can be pushed to the new place
+  c.next_pos  = c.pos + Global.DIRS[next_dir]
+  c.next_dir = next_dir
+  c.processed = true
+  if c is Bubble:
+    c.next_state = State.MOVING
+  tick_stop()
+  if c.is_blocked(world, c.next_pos):
+    c.tick_stop()
+    bounce()
+    return
+  # check if this is a bubble pushed into the player
+  var nc:Cell = world.get_next_cell(c.next_pos, c)
+  if c is Bubble and nc is Player:
+    if not (nc as Player).tick_pickup(world, c):
+      # if the player can't pickup the pushed bubble, block and bounce
+      c.tick_stop()
+      bounce()
+
+
+
 ## special tick for bubble, because it is so special
 func tick(world:World)->void:
   if processed: return
@@ -134,8 +157,12 @@ func tick(world:World)->void:
       # check winning bubble
       var wb:Bubble = can_merge(c)
       if wb == null:
-        bounce()
-        c.bounce()
+        if c.is_stationary():
+          tick_impulse(world, c)
+        else:
+          bounce()
+          c.bounce()
+
       elif wb == self:
         tick_merge(c)
       else:
@@ -146,14 +173,7 @@ func tick(world:World)->void:
       # should not happen. no other moving cells
       return
     if c.is_movable:
-      # check if the movable can be pushed to the new place
-      c.next_pos  = c.pos + Global.DIRS[next_dir]
-      c.next_dir = next_dir
-      c.processed = true
-      tick_stop()
-      if c.is_blocked(world, c.next_pos):
-        c.tick_stop()
-        bounce()
+      tick_impulse(world, c)
       return
 
     bounce()
