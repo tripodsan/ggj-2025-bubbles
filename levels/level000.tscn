@@ -17,16 +17,25 @@ tile_set = ExtResource("1_s4u8l")
 metadata/_edit_lock_ = true
 
 [node name="blue" parent="." instance=ExtResource("2_i7n1o")]
-position = Vector2(88, 104)
+position = Vector2(88, 72)
 type = 3
 state = 1
-dir = 3
+dir = 2
+
+[node name="red" parent="." instance=ExtResource("2_i7n1o")]
+position = Vector2(56, 72)
+type = 1
+state = 1
 
 [node name="white" parent="." instance=ExtResource("2_i7n1o")]
-position = Vector2(56, 72)
+position = Vector2(72, 56)
 state = 1
+dir = 1
 metadata/_edit_group_ = true
 
-[node name="red" parent="white" instance=ExtResource("2_i7n1o")]
-type = 1
-state = 4
+[node name="green" parent="." instance=ExtResource("2_i7n1o")]
+position = Vector2(72, 88)
+type = 2
+state = 1
+dir = 3
+metadata/_edit_group_ = true

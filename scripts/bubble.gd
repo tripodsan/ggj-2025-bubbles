@@ -6,6 +6,13 @@ extends Cell
 
 enum Type { WHITE, RED, GREEN, BLUE }
 
+var YIELD_RULES:Array[Array] = [
+  [0, 0, 2, 3],
+  [0, 1, 1, 1],
+  [2, 1, 2, 2],
+  [3, 1, 2, 3]
+]
+
 var anim_names = [
   "l_white",
   "l_red",
@@ -131,6 +138,10 @@ func prepare_tick(world:World)->void:
   next_child = null
   half_step = false
 
+func get_precedence(b0:Bubble, b1:Bubble)->Bubble:
+  var d:int = YIELD_RULES[b0.next_dir][b1.next_dir]
+  return b0 if b0.next_dir == d else b1
+
 
 func tick_impulse(world:World, c:Cell)->void:
   # check if the movable can be pushed to the new place
@@ -161,10 +172,16 @@ func tick(world:World)->void:
     if !c:
       c = is_swap(world)
       if c is Bubble:
-        tick_stop()
-        bounce()
-        c.tick_stop()
-        c.bounce()
+        var wb:Bubble = can_merge(c)
+        if wb == null:
+          tick_stop()
+          bounce()
+          c.tick_stop()
+          c.bounce()
+        elif wb == self:
+          tick_merge(c)
+        else:
+          c.tick_merge(self)
       return
 
     c.processed = true
@@ -178,11 +195,17 @@ func tick(world:World)->void:
       if wb == null:
         if c.is_stationary():
           tick_impulse(world, c)
-        else:
+        elif (self.next_dir + 2) % 4 == c.next_dir: # bounce both if opposite
           tick_stop()
           bounce(true)
           c.tick_stop()
           c.bounce(true)
+        else:
+          wb = get_precedence(self, c)
+          # get other
+          wb = self if wb == c else c
+          wb.tick_stop()
+          wb.bounce()
       elif wb == self:
         tick_merge(c)
       else:
@@ -237,6 +260,8 @@ func can_merge(b:Bubble)->Bubble:
     return self
   if is_full():
     return b
+  if get_num_children() == b.get_num_children():
+    return get_precedence(self, b)
   return self if get_num_children() < b.get_num_children() else b
 
 func tick_merge(b:Bubble)->void:

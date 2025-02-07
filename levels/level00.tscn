@@ -32,6 +32,11 @@ position = Vector2(104, 120)
 state = 1
 dir = 3
 
+[node name="whte6" parent="." instance=ExtResource("5_mll6j")]
+position = Vector2(72, 120)
+state = 1
+dir = 1
+
 [node name="whte2" parent="." instance=ExtResource("5_mll6j")]
 position = Vector2(248, 72)
 type = 1
@@ -64,6 +69,11 @@ position = Vector2(104, 72)
 type = 3
 state = 1
 dir = 1
+
+[node name="blue6" parent="." instance=ExtResource("5_mll6j")]
+position = Vector2(56, 136)
+type = 3
+state = 1
 
 [node name="blue3" parent="." instance=ExtResource("5_mll6j")]
 position = Vector2(216, 72)
@@ -134,6 +144,69 @@ state = 4
 
 [node name="green" parent="white2" instance=ExtResource("5_mll6j")]
 position = Vector2(-2, 0)
+type = 2
+state = 4
+
+[node name="white10" parent="." instance=ExtResource("5_mll6j")]
+position = Vector2(40, 56)
+state = 1
+metadata/_edit_group_ = true
+
+[node name="red" parent="white10" instance=ExtResource("5_mll6j")]
+position = Vector2(0, -2)
+type = 1
+state = 4
+
+[node name="green" parent="white10" instance=ExtResource("5_mll6j")]
+position = Vector2(0, 2)
+type = 2
+state = 4
+
+[node name="white11" parent="." instance=ExtResource("5_mll6j")]
+position = Vector2(56, 40)
+state = 1
+dir = 1
+metadata/_edit_group_ = true
+
+[node name="red" parent="white11" instance=ExtResource("5_mll6j")]
+position = Vector2(2, 0)
+type = 1
+state = 4
+
+[node name="green" parent="white11" instance=ExtResource("5_mll6j")]
+position = Vector2(-2, 0)
+type = 2
+state = 4
+
+[node name="white12" parent="." instance=ExtResource("5_mll6j")]
+position = Vector2(72, 88)
+state = 1
+dir = 3
+metadata/_edit_group_ = true
+
+[node name="red" parent="white12" instance=ExtResource("5_mll6j")]
+position = Vector2(-2, 0)
+type = 1
+state = 4
+
+[node name="green" parent="white12" instance=ExtResource("5_mll6j")]
+position = Vector2(2, 0)
+type = 2
+state = 4
+
+[node name="white13" parent="." instance=ExtResource("5_mll6j")]
+position = Vector2(40, 104)
+state = 1
+dir = 3
+metadata/_edit_group_ = true
+
+[node name="red" parent="white13" instance=ExtResource("5_mll6j")]
+position = Vector2(-2, 0)
+type = 1
+state = 4
+
+[node name="green" parent="white13" instance=ExtResource("5_mll6j")]
+position = Vector2(2, 0)
 type = 2
 state = 4
 
