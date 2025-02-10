@@ -8,6 +8,7 @@ func _ready() -> void:
   is_movable = true
   is_solid = true
   is_heavy = true
+  is_soft = true
 
 func apply():
   if pos == next_pos: return
@@ -22,3 +23,6 @@ func apply_tick(world:World)->void:
   if state == State.FALLING:
     tween = create_tween()
     tween.tween_property(self, 'scale', Vector2.ZERO, Global.tick_speed)
+  else:
+    # rock only moves 1 tile
+    state = State.IDLE

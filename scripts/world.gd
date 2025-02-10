@@ -81,12 +81,16 @@ func tick():
       cells.erase(c)
     else:
       c.prepare_tick(self)
+#
+  #for c in cells:
+    #c.tick_move(self)
 
-  for c in cells:
-    c.tick_move(self)
-
-  for c in cells:
-    c.tick(self)
+  var st:int = 0
+  while not all_processed():
+    print(ticks, '.', st)
+    st += 1
+    for c in cells:
+      c.tick(self)
 
   for c in cells:
     c.apply_tick(self)
@@ -109,6 +113,10 @@ func tick():
       #s.activate(false)
       #s.trigger_node = null
 
+func all_processed()->bool:
+  for c in cells:
+    if !c.processed: return false
+  return true
 
 
 func goal_reached():
@@ -157,7 +165,8 @@ func is_closed_door(pos:Vector2i)->bool:
 func get_cell(pos:Vector2i, ignored:Cell)->Cell:
   var found:Cell = null
   for c:Cell in cells:
-    if c != ignored && c.pos == pos:
+    if c == ignored: continue
+    if c.pos == pos:
       if !found || found is Door: # ignore door, if something else on top
         found = c
   return found
@@ -166,7 +175,7 @@ func get_next_cell(pos:Vector2i, ignored:Cell)->Cell:
   var found:Cell = null
   for c:Cell in cells:
     if c != ignored && c.next_pos == pos:
-      if !found || found is Door: # ignore door, if something else on top
+      if !found || found is Door || found is Player: # ignore door, if something else on top
         found = c
   return found
 
@@ -397,7 +406,8 @@ func init_level():
     if n is Bubble && n.state == Bubble.State.ENTERING:
       # ignore sub-bubble
       continue;
-    cells.append(n)
+    if n.visible:
+      cells.append(n)
   for n:Sensor in get_tree().get_nodes_in_group(&"sensors"):
     sensors.append(n)
 

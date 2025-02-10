@@ -66,6 +66,7 @@ func _ready():
   is_movable = false
   is_solid = false
   is_heavy = false
+  can_push = true
 
   register_child_bubbles()
   _queue_update = true
@@ -143,6 +144,10 @@ func get_precedence(b0:Bubble, b1:Bubble)->Bubble:
   return b0 if b0.next_dir == d else b1
 
 
+func tick_push(c:Cell)->void:
+  super(c)
+  tick_stop()
+
 func tick_impulse(world:World, c:Cell)->void:
   # check if the movable can be pushed to the new place
   c.next_pos  = c.pos + Global.DIRS[next_dir]
@@ -153,7 +158,7 @@ func tick_impulse(world:World, c:Cell)->void:
   tick_stop()
   if c.is_blocked(world, c.next_pos):
     c.tick_stop()
-    bounce()
+    #bounce()
     return
   # check if this is a bubble pushed into the player
   var nc:Cell = world.get_next_cell(c.next_pos, c)
@@ -161,21 +166,21 @@ func tick_impulse(world:World, c:Cell)->void:
     if not (nc as Player).tick_pickup(world, c):
       # if the player can't pickup the pushed bubble, block and bounce
       c.tick_stop()
-      bounce()
+      #bounce()
 
 ## special tick for bubble, because it is so special
-func tick(world:World)->void:
+func _tick(world:World)->void:
   if processed: return
   processed = true
   if state == State.MOVING:
     var c:Cell = world.get_next_cell(next_pos, self)
     if !c:
-      c = is_swap(world)
+      c = get_swap(world)
       if c is Bubble:
         var wb:Bubble = can_merge(c)
         if wb == null:
           tick_stop()
-          bounce()
+          #bounce()
           c.tick_stop()
           c.bounce()
         elif wb == self:
@@ -197,7 +202,7 @@ func tick(world:World)->void:
           tick_impulse(world, c)
         elif (self.next_dir + 2) % 4 == c.next_dir: # bounce both if opposite
           tick_stop()
-          bounce(true)
+          #bounce(true)
           c.tick_stop()
           c.bounce(true)
         else:
@@ -219,10 +224,11 @@ func tick(world:World)->void:
       tick_impulse(world, c)
       return
 
-    bounce()
+    #bounce()
 
 
 func apply_tick(world):
+  prints(name, next_state, next_pos)
   # don't call super, as we don't want to set_pos auto update
   var moved:bool = pos != next_pos && (next_state == State.MOVING || next_state == State.ABSORBING)
   pos = next_pos
@@ -241,16 +247,22 @@ func apply_tick(world):
 
 
 ## sets the next direction and state to make the bubble turn
-func bounce(half:bool = false)->void:
+func tick_bounce(other:Cell)->void:
   next_dir = (dir + 2) % 4
   next_state = State.BOUNCING
-  half_step = half
+  if other && other.next_state == State.MOVING:
+    other.tick_stop()
+    other.tick_bounce(null)
+    other.processed = true
+    #half_step = true
 
 func is_stationary()->bool:
   return state != State.MOVING
 
 ## tests if can be merged with other bubble and return the resulting parent
-func can_merge(b:Bubble)->Bubble:
+func can_merge(other:Cell)->Cell:
+  var b:Bubble = other as Bubble
+  if !b: return other.can_merge(self)
   if is_full() && b.is_full(): return null
   if is_stationary():
     return null if is_full() else self
@@ -264,12 +276,14 @@ func can_merge(b:Bubble)->Bubble:
     return get_precedence(self, b)
   return self if get_num_children() < b.get_num_children() else b
 
-func tick_merge(b:Bubble)->void:
+func tick_merge(c:Cell)->void:
+  assert(c is Bubble)
   next_state = State.ABSORBING
-  b.next_state = State.ENTERING
-  next_child = b
+  c.processed = true
+  c.next_state = State.ENTERING
+  next_child = c
   if is_stationary():
-    next_dir = b.dir
+    next_dir = c.dir
 
 func _absorb()->void:
   assert(next_child)

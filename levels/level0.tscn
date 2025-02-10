@@ -73,10 +73,13 @@ position = Vector2(248, 40)
 [node name="red" parent="white" instance=ExtResource("5_2etfj")]
 position = Vector2(0, -2)
 type = 1
+state = 4
 
 [node name="green" parent="white" instance=ExtResource("5_2etfj")]
 position = Vector2(0, 2)
 type = 2
+state = 4
 
 [node name="whte2" parent="white/green" instance=ExtResource("5_2etfj")]
+visible = false
 type = 3

@@ -26,13 +26,16 @@ var _queue_update:bool = false
 ## eg: wall, player, rock
 var is_solid:bool = true
 
-## if a cell is movable, it can be moved.
+## if a cell is movable, it can be pushed.
 var is_movable:bool = false
+
+##
+var can_push:bool = false
 
 ## if a cell is heavy, it will trigger the pressure plate
 var is_heavy:bool = false
 
-## if a cell is soft, it will absorb the impuls of a bubble (eg kelp)
+## if a cell is soft, it will absorb the impuls of a bubble (eg kelp or rock)
 var is_soft:bool = false
 
 var next_pos:Vector2i
@@ -40,6 +43,8 @@ var next_pos:Vector2i
 var next_state:State = State.IDLE
 
 var next_dir:int = 0
+
+var influencers:Array[Cell] = []
 
 func _ready() -> void:
   _queue_update = true
@@ -60,6 +65,10 @@ func set_pos(v:Vector2):
   pos = v
   position = Global.grid2cart(pos)
 
+## return the cell that is not "self"
+func other(c0:Cell, c1:Cell)->Cell:
+  return c0 if c1 == self else c1
+
 ## checks if the cell is blocked at the given position by a solid cell, like wall or door
 func is_blocked(world:World, pos:Vector2i)->BlockType:
   var t:StringName = world.get_type(pos)
@@ -70,7 +79,7 @@ func is_blocked(world:World, pos:Vector2i)->BlockType:
   # special case for player that it can't fall into abyss
   if self is Player and not world.is_ground(pos): return BlockType.HARD
   var c:Cell = world.get_next_cell(pos, self)
-  if c is Bubble: return BlockType.BUBBLE
+  #if c is Bubble: return BlockType.BUBBLE
   if c && c.is_solid && !c.is_movable: return BlockType.HARD
   return BlockType.NONE
 
@@ -79,34 +88,42 @@ func tick_stop()->void:
   next_state = State.IDLE
   next_pos = pos
   next_dir = dir
+  for c in influencers:
+    c.tick_stop()
+    c.tick_bounce(null)
+
+## check if this cell can be merged with the other and returns the "winning" one.
+## this is also used to check player pickup
+func can_merge(other:Cell)->Cell:
+  return null
+
+func tick_merge(other:Cell)->void:
+  pass
+
+func tick_push(c:Cell)->void:
+  c.influencers.append(self)
+  c.state = State.MOVING
+  c.next_dir = next_dir
+  c.processed = false
 
 func prepare_tick(world:World)->void:
   processed = false
   next_pos = pos
   next_dir = dir
   next_state = state
+  influencers.clear()
 
-## moves all the moving cells
-func tick_move(world:World)->void:
-  if state == State.MOVING:
-    next_pos = pos + Global.DIRS[next_dir]
-    var bt:BlockType = is_blocked(world, next_pos)
-    if bt && bt != BlockType.BUBBLE:
-      tick_stop()
-      if self is Bubble && bt == BlockType.HARD:
-        (self as Bubble).bounce()
-      processed = true
-
+func tick_bounce(other:Cell)->void:
+  pass
 
 # check if a cell at next_pos swapped place with this cell at pos
-func is_swap(world:World)->Cell:
+func get_swap(world:World)->Cell:
   ## get cell at our previous location
   var c:Cell = world.get_next_cell(pos, self)
   ## if the cells previous pos is this cells next_pos, they swapped
   if c && c.pos == next_pos: return c
   return null
 
-## updates the state and validates new positions
 func tick(world:World)->void:
   if processed: return
   processed = true
@@ -118,31 +135,29 @@ func tick(world:World)->void:
     next_state = State.REMOVED
     return
   if state == State.MOVING:
+    next_pos = pos + Global.DIRS[next_dir]
+    var bt:BlockType = is_blocked(world, next_pos)
+    if bt:
+      processed = true
+      tick_stop()
+      if bt == BlockType.HARD:
+        tick_bounce(null)
     var c:Cell = world.get_next_cell(next_pos, self)
     if !c:
-      c = is_swap(world)
-      if c is Bubble: # currently only bubbles can swap
-        c.processed = true
-        if !(self as Player).tick_pickup(world, c):
-          tick_stop()
-          return
+      c = get_swap(world)
+    if !c:
       return
-    # special case: player and bubble
-    c.processed = true
-    if self is Player and c is Bubble:
-      (self as Player).tick_pickup(world, c)
+    if can_push && c.is_movable && c.state != State.MOVING:
+      ## move away
+      tick_push(c)
+      #c.tick(world)
       return
-    if c.state == State.MOVING:
-      # currently no other cells than bubbles move
+    var p:Cell = can_merge(c)
+    if p:
+      p.tick_merge(p.other(self, c))
       return
-    if c.is_movable:
-      # check if the movable can be pushed to the new place
-      c.next_pos  = c.pos + Global.DIRS[next_dir]
-      c.next_dir = next_dir
-      c.processed = true
-      if c.is_blocked(world, c.next_pos):
-        c.tick_stop()
-        tick_stop()
+    tick_stop()
+    tick_bounce(c)
 
 func apply_tick(world:World)->void:
   set_pos(next_pos)
