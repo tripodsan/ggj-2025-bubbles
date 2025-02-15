@@ -80,10 +80,10 @@ func tick():
     elif c.state == Cell.State.ENTERING:
       cells.erase(c)
     else:
-      c.prepare_tick(self)
-#
-  #for c in cells:
-    #c.tick_move(self)
+      c.tick_prepare(self)
+
+  for c in cells:
+    c.tick_move(self)
 
   var st:int = 0
   while not all_processed():
@@ -177,6 +177,13 @@ func get_next_cell(pos:Vector2i, ignored:Cell)->Cell:
     if c != ignored && c.next_pos == pos:
       if !found || found is Door || found is Player: # ignore door, if something else on top
         found = c
+  return found
+
+func get_next_cells(pos:Vector2i, ignored:Cell)->Array[Cell]:
+  var found:Array[Cell] = []
+  for c:Cell in cells:
+    if c != ignored && c.next_pos == pos:
+      found.append(c)
   return found
 
 func can_move_rock(pos:Vector2i)->bool:

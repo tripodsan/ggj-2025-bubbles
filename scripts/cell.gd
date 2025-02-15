@@ -11,8 +11,10 @@ enum BlockType { NONE, HARD, SOFT, BUBBLE }
 @export
 var state:State = State.IDLE: set = set_state
 
+## the procesed tick step
 var processed:bool
 
+## position of cell
 var pos:Vector2i
 
 ## direction
@@ -69,6 +71,32 @@ func set_pos(v:Vector2):
 func other(c0:Cell, c1:Cell)->Cell:
   return c0 if c1 == self else c1
 
+## prepares the cell for the next tick and handles simple states
+func tick_prepare(world:World)->void:
+  processed = false
+  next_pos = pos
+  next_dir = dir
+  next_state = state
+  influencers.clear()
+  if state == State.IDLE:
+    if is_heavy && !world.is_ground(pos):
+      next_state = State.FALLING
+    return
+  if state == State.FALLING:
+    next_state = State.REMOVED
+    return
+
+## process moving cells and handle early stops
+func tick_move(world:World)->void:
+  if next_state == State.MOVING:
+    next_pos = next_pos + Global.DIRS[next_dir]
+    var bt:BlockType = is_blocked(world, next_pos)
+    if bt:
+      processed = true
+      tick_stop()
+      if bt == BlockType.HARD:
+        tick_bounce(null)
+
 ## checks if the cell is blocked at the given position by a solid cell, like wall or door
 func is_blocked(world:World, pos:Vector2i)->BlockType:
   var t:StringName = world.get_type(pos)
@@ -78,9 +106,8 @@ func is_blocked(world:World, pos:Vector2i)->BlockType:
   if t == &"goal" and not self is Player: return BlockType.HARD
   # special case for player that it can't fall into abyss
   if self is Player and not world.is_ground(pos): return BlockType.HARD
-  var c:Cell = world.get_next_cell(pos, self)
-  #if c is Bubble: return BlockType.BUBBLE
-  if c && c.is_solid && !c.is_movable: return BlockType.HARD
+  for c:Cell in world.get_next_cells(pos, self):
+    if c && c.is_solid && !c.is_movable: return BlockType.HARD
   return BlockType.NONE
 
 ## sets the state to IDLE and resets next_pos and next_dir
@@ -102,16 +129,9 @@ func tick_merge(other:Cell)->void:
 
 func tick_push(c:Cell)->void:
   c.influencers.append(self)
-  c.state = State.MOVING
+  c.next_state = State.MOVING
   c.next_dir = next_dir
   c.processed = false
-
-func prepare_tick(world:World)->void:
-  processed = false
-  next_pos = pos
-  next_dir = dir
-  next_state = state
-  influencers.clear()
 
 func tick_bounce(other:Cell)->void:
   pass
@@ -127,30 +147,28 @@ func get_swap(world:World)->Cell:
 func tick(world:World)->void:
   if processed: return
   processed = true
-  if state == State.IDLE:
-    if is_heavy && !world.is_ground(pos):
-      next_state = State.FALLING
-    return
-  if state == State.FALLING:
-    next_state = State.REMOVED
-    return
-  if state == State.MOVING:
-    next_pos = pos + Global.DIRS[next_dir]
-    var bt:BlockType = is_blocked(world, next_pos)
-    if bt:
-      processed = true
+  if next_state == State.MOVING:
+    var cells:Array[Cell] = world.get_next_cells(next_pos, self)
+    if cells.is_empty():
+      return
+    if cells.size() > 1:
+      # stop all cells
       tick_stop()
-      if bt == BlockType.HARD:
-        tick_bounce(null)
-    var c:Cell = world.get_next_cell(next_pos, self)
+      tick_bounce(cells[0])
+      for c:Cell in cells:
+        c.tick_stop()
+        c.tick_bounce(self)
+      return
+
+    var c:Cell = cells[0]
     if !c:
       c = get_swap(world)
     if !c:
       return
-    if can_push && c.is_movable && c.state != State.MOVING:
+    if can_push && c.is_movable && c.next_state != State.MOVING:
       ## move away
       tick_push(c)
-      #c.tick(world)
+      c.tick_move(world)
       return
     var p:Cell = can_merge(c)
     if p:

@@ -132,7 +132,7 @@ func recalc_sub()->void:
     left.position = -Global.DIRS[(dir + 1)%4] * 2 - (Global.DIRS[dir] * 8 if half_step else Vector2i.ZERO)
     right.position = Global.DIRS[(dir + 1)%4] * 2 - (Global.DIRS[dir] * 8 if half_step else Vector2i.ZERO)
 
-func prepare_tick(world:World)->void:
+func tick_prepare(world:World)->void:
   if state == State.BOUNCING || state == State.ABSORBING:
     state = State.MOVING
   super(world)
@@ -170,8 +170,8 @@ func tick_impulse(world:World, c:Cell)->void:
 
 ## special tick for bubble, because it is so special
 func _tick(world:World)->void:
-  if processed: return
-  processed = true
+  #if processed: return
+  #processed = true
   if state == State.MOVING:
     var c:Cell = world.get_next_cell(next_pos, self)
     if !c:

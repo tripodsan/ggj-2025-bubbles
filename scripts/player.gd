@@ -50,11 +50,11 @@ func tick_merge(other:Cell)->void:
   #other.visible = false
   next_bubble = other
 
-func prepare_tick(world:World)->void:
+func tick_prepare(world:World)->void:
   super(world)
   next_bubble = null
   if input_dir >= 0:
-    state = State.MOVING
+    next_state = State.MOVING
     next_dir = input_dir
     input_dir = -1
 
