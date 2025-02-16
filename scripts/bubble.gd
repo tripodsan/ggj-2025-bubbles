@@ -95,7 +95,7 @@ func _process(_d)->void:
     State.ENTERING:
       visual.animation = anim_names[type + 4]
       visual.stop()
-    State.BOUNCING:
+    State.BOUNCING, State.PUSHING, State.PULSING:
       visual.play(turn_names[(dir + 2) % 4 + type * 4], 1.0 / Global.tick_speed)
       # add hack for missing bouncing anim
       if half_step:
@@ -144,9 +144,19 @@ func get_precedence(b0:Bubble, b1:Bubble)->Bubble:
   return b0 if b0.next_dir == d else b1
 
 
-func tick_push(c:Cell)->void:
-  super(c)
+func tick_push(world:World, c:Cell)->bool:
+  var ret:bool = super(world, c)
   tick_stop()
+  if ret:
+    next_dir = (dir + 2) % 4
+    next_state = State.PUSHING
+  return ret
+
+func tick_turn(world:World)->void:
+  var ct:int = int(world.get_color_type(pos))
+  next_dir = world.corner_matrix[ct][dir]
+  if next_dir != dir:
+    next_state = State.TURNING
 
 func tick_impulse(world:World, c:Cell)->void:
   # check if the movable can be pushed to the new place
@@ -248,13 +258,20 @@ func apply_tick(world):
 
 ## sets the next direction and state to make the bubble turn
 func tick_bounce(other:Cell)->void:
+  super(other)
   next_dir = (dir + 2) % 4
   next_state = State.BOUNCING
   if other && other.next_state == State.MOVING:
-    other.tick_stop()
     other.tick_bounce(null)
     other.processed = true
-    #half_step = true
+    if other.next_pos == next_pos:
+      half_step = true
+  elif other && other.next_state == State.IDLE:
+    next_dir = (dir + 2) % 4
+    next_state = State.PUSHING
+    other.next_dir = dir
+    other.next_state = State.PULSING
+    ##half_step = true
 
 func is_stationary()->bool:
   return state != State.MOVING

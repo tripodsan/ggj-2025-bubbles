@@ -4,9 +4,9 @@ extends Node2D
 
 ## states of cells.
 # TODO: bubble states do not really belong here
-enum State { IDLE, MOVING, TURNING, ABSORBING, ENTERING, BURSTING, BOUNCING, FALLING, REMOVED }
+enum State { IDLE, MOVING, TURNING, ABSORBING, ENTERING, BURSTING, BOUNCING, PULSING, PUSHING, FALLING, REMOVED }
 
-enum BlockType { NONE, HARD, SOFT, BUBBLE }
+enum BlockType { NONE, HARD, SOFT }
 
 @export
 var state:State = State.IDLE: set = set_state
@@ -46,8 +46,6 @@ var next_state:State = State.IDLE
 
 var next_dir:int = 0
 
-var influencers:Array[Cell] = []
-
 func _ready() -> void:
   _queue_update = true
   if !Engine.is_editor_hint():
@@ -77,7 +75,6 @@ func tick_prepare(world:World)->void:
   next_pos = pos
   next_dir = dir
   next_state = state
-  influencers.clear()
   if state == State.IDLE:
     if is_heavy && !world.is_ground(pos):
       next_state = State.FALLING
@@ -85,17 +82,34 @@ func tick_prepare(world:World)->void:
   if state == State.FALLING:
     next_state = State.REMOVED
     return
+  if state == State.PUSHING:
+    next_state = State.IDLE
+    return
+  if state == State.PULSING:
+    next_state = State.MOVING
+    return
+  if state == State.TURNING:
+    next_state = State.MOVING
+    return
 
 ## process moving cells and handle early stops
 func tick_move(world:World)->void:
+  # check if on corner piece
+  if state != State.TURNING && state == State.MOVING && world.get_type(pos) == &"corner":
+    tick_turn(world)
+
   if next_state == State.MOVING:
-    next_pos = next_pos + Global.DIRS[next_dir]
+    next_pos = pos + Global.DIRS[next_dir]
     var bt:BlockType = is_blocked(world, next_pos)
     if bt:
       processed = true
-      tick_stop()
       if bt == BlockType.HARD:
         tick_bounce(null)
+      else:
+        tick_stop()
+
+func tick_turn(world:World):
+  pass
 
 ## checks if the cell is blocked at the given position by a solid cell, like wall or door
 func is_blocked(world:World, pos:Vector2i)->BlockType:
@@ -115,9 +129,6 @@ func tick_stop()->void:
   next_state = State.IDLE
   next_pos = pos
   next_dir = dir
-  for c in influencers:
-    c.tick_stop()
-    c.tick_bounce(null)
 
 ## check if this cell can be merged with the other and returns the "winning" one.
 ## this is also used to check player pickup
@@ -127,21 +138,32 @@ func can_merge(other:Cell)->Cell:
 func tick_merge(other:Cell)->void:
   pass
 
-func tick_push(c:Cell)->void:
-  c.influencers.append(self)
+func tick_push(world:World, c:Cell)->bool:
   c.next_state = State.MOVING
   c.next_dir = next_dir
-  c.processed = false
+  c.processed = true
+  c.tick_move(world)
+  if c.next_state != State.MOVING:
+    return false
+  for nc:Cell in world.get_next_cells(c.next_pos, c):
+    # if the next cell was moving, stop it
+    if nc.next_state == State.MOVING:
+      nc.tick_bounce(null)
+    else:
+      # abort push
+      c.tick_stop()
+      return false
+  return true
 
 func tick_bounce(other:Cell)->void:
-  pass
+  tick_stop()
 
 # check if a cell at next_pos swapped place with this cell at pos
 func get_swap(world:World)->Cell:
   ## get cell at our previous location
-  var c:Cell = world.get_next_cell(pos, self)
-  ## if the cells previous pos is this cells next_pos, they swapped
-  if c && c.pos == next_pos: return c
+  for c:Cell in world.get_next_cells(pos, self):
+    ## if the cells previous pos is this cells next_pos, they swapped
+    if c && c.pos == next_pos: return c
   return null
 
 func tick(world:World)->void:
@@ -149,32 +171,24 @@ func tick(world:World)->void:
   processed = true
   if next_state == State.MOVING:
     var cells:Array[Cell] = world.get_next_cells(next_pos, self)
-    if cells.is_empty():
-      return
     if cells.size() > 1:
       # stop all cells
-      tick_stop()
       tick_bounce(cells[0])
       for c:Cell in cells:
-        c.tick_stop()
         c.tick_bounce(self)
       return
-
-    var c:Cell = cells[0]
-    if !c:
-      c = get_swap(world)
+    var c:Cell = get_swap(world) if cells.is_empty() else cells[0]
     if !c:
       return
     if can_push && c.is_movable && c.next_state != State.MOVING:
       ## move away
-      tick_push(c)
-      c.tick_move(world)
+      if !tick_push(world, c):
+        tick_bounce(c)
       return
     var p:Cell = can_merge(c)
     if p:
       p.tick_merge(p.other(self, c))
       return
-    tick_stop()
     tick_bounce(c)
 
 func apply_tick(world:World)->void:
