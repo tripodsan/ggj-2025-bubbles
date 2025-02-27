@@ -10,6 +10,6 @@ func _ready():
 func _on_sensor_activated(active:bool, _s:Sensor)->void:
   for s:Sensor in targets:
     if !s.active:
-      get_parent().open = false
+      get_parent().next_state = Cell.State.CLOSED
       return
-  get_parent().open = true
+  get_parent().next_state = Cell.State.OPEN

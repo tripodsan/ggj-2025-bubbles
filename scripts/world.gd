@@ -92,26 +92,29 @@ func tick():
     for c in cells:
       c.tick(self)
 
+  check_sensors()
+
   for c in cells:
     c.apply_tick(self)
 
   check_goal()
-#func update_sensors():
-  #for r in rocks:
-    #var s:Sensor = get_sensor(r.pos)
-    #if s && s.type == Sensor.Type.PLATE:
-      #s.trigger_node = r
-      #s.activate(true)
-  #for b in bubbles:
-    #var s:Sensor = get_sensor(b.pos)
-    #if s:
-      #if s.type == b.type || s.type == Sensor.Type.SENSOR_WHITE:
-        #s.toggle()
-#
-  #for s in sensors:
-    #if s.active && s.trigger_node && s.trigger_node.pos != s.pos:
-      #s.activate(false)
-      #s.trigger_node = null
+
+func check_sensors():
+  for c in cells:
+    var s:Sensor = get_sensor(c.next_pos)
+    if !s: continue
+    if s.type == Sensor.Type.PLATE && c.is_heavy:
+      s.trigger_node = c
+      s.activate(true)
+    elif c is Bubble && (s.type == c.type || s.type == Sensor.Type.SENSOR_WHITE) && s.trigger_node != c:
+      s.trigger_node = c
+      s.toggle()
+
+  for s in sensors:
+    if s.trigger_node && s.trigger_node.next_pos != s.pos:
+      if s.type == Sensor.Type.PLATE:
+        s.activate(false)
+      s.trigger_node = null
 
 func all_processed()->bool:
   for c in cells:
@@ -131,22 +134,6 @@ func check_goal():
     goal_reached()
     return
 
-  #if walls.get_cell_tile_data(pos) != null: return
-  #if !is_ground(pos): return
-  #if is_closed_door(pos): return
-  #var r:Rock = get_rock(pos)
-  #if r != null:
-    #var next_rock_pos:Vector2i = r.pos + Global.DIRS[dir]
-    #if !can_move_rock(next_rock_pos): return
-    #if get_bubble(next_rock_pos, null): return
-    #r.set_pos(next_rock_pos)
-  #var b:Bubble = get_bubble(pos, null)
-  #if b:
-    #pickup_bubble(b)
-
-  #player.dir = dir
-  #player.pos = pos
-
 func is_ground(pos:Vector2i)->bool:
   var c:TileData = floor.get_cell_tile_data(pos)
   if c == null: return false
@@ -156,11 +143,6 @@ func get_sensor(pos:Vector2i)->Sensor:
   for s:Sensor in sensors:
     if s.pos == pos: return s
   return null
-
-func is_closed_door(pos:Vector2i)->bool:
-  #for s:Door in doors:
-    #if s.pos == pos: return !s.open
-  return false
 
 func get_cell(pos:Vector2i, ignored:Cell)->Cell:
   var found:Cell = null
@@ -182,13 +164,15 @@ func get_next_cell(pos:Vector2i, ignored:Cell)->Cell:
 func get_next_cells(pos:Vector2i, ignored:Cell)->Array[Cell]:
   var found:Array[Cell] = []
   for c:Cell in cells:
+    # ignore open door
+    if c is Door and c.open: continue
     if c != ignored && c.next_pos == pos:
       found.append(c)
   return found
 
 func can_move_rock(pos:Vector2i)->bool:
   if walls.get_cell_tile_data(pos) != null: return false
-  if is_closed_door(pos): return false
+  #if is_closed_door(pos): return false
   if get_rock(pos): return false
   #if get_bubble(pos, null): return false
   return true
@@ -306,10 +290,10 @@ func _old_tick(b:Bubble):
       b.next_pos = next_pos
       return
 
-    if walls.get_cell_tile_data(next_pos) != null || is_closed_door(next_pos):
+    #if walls.get_cell_tile_data(next_pos) != null || is_closed_door(next_pos):
       # bounce on wall
-      b.turn()
-      return
+      #b.turn()
+      #return
     var r:Rock = get_rock(next_pos)
     if r != null:
       var next_rock_pos:Vector2i = r.pos + Global.DIRS[dir]
@@ -370,7 +354,7 @@ func shoot_bubble()->void:
   var type:StringName = get_type(pos)
   if type != &"" and type != &"spike" and type != &"corner": return
   if get_rock(pos): return
-  if is_closed_door(pos): return
+  #if is_closed_door(pos): return
 
   var b:Bubble = player.pop_bubble()
   if b == null: return

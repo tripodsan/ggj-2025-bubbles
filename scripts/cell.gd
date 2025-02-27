@@ -4,7 +4,7 @@ extends Node2D
 
 ## states of cells.
 # TODO: bubble states do not really belong here
-enum State { IDLE, MOVING, TURNING, ABSORBING, ENTERING, BURSTING, BOUNCING, PULSING, PUSHING, FALLING, REMOVED }
+enum State { IDLE, MOVING, TURNING, ABSORBING, ENTERING, BURSTING, BOUNCING, PULSING, PUSHING, FALLING, REMOVED, OPEN, CLOSED }
 
 enum BlockType { NONE, HARD, SOFT }
 
