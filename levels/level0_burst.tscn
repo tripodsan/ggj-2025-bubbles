@@ -1,0 +1,261 @@
+[gd_scene load_steps=3 format=4 uid="uid://c5t8wks16ikv7"]
+
+[ext_resource type="TileSet" uid="uid://dk1hs24afigqd" path="res://tileset.tres" id="1_ebvsr"]
+[ext_resource type="PackedScene" uid="uid://ddghupwo8yr6e" path="res://bubble.tscn" id="2_r03qf"]
+
+[node name="level" type="Node2D"]
+texture_filter = 1
+
+[node name="floor" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAEAAUAAAAAAAcAAAAFAAUAAAAAAAcAAAAFAAYAAAAAAAcAAAAGAAYAAAAAAAcAAAAHAAcAAAAAAAcAAAAGAAcAAAAAAAcAAAAFAAcAAAAAAAcAAAAEAAcAAAAAAAcAAAAEAAYAAAAAAAcAAAAGAAUAAAAAAAcAAAAHAAUAAAAAAAcAAAAHAAYAAAAAAAcAAAAIAAUAAAAAAAcAAAAJAAcAAAAAAAcAAAAIAAYAAAAAAAcAAAAIAAcAAAAAAAcAAAABAAIAAAAAAAcAAAABAAMAAAAAAAcAAAABAAQAAAAAAAcAAAABAAUAAAAAAAcAAAABAAYAAAAAAAcAAAABAAcAAAAAAAcAAAABAAgAAAAAAAcAAAACAAEAAAAAAAcAAAACAAIAAAAAAAcAAAACAAMAAAAAAAcAAAACAAQAAAAAAAcAAAACAAUAAAAAAAcAAAACAAYAAAAAAAcAAAACAAcAAAAAAAcAAAACAAgAAAAAAAcAAAACAAkAAAAAAAcAAAADAAEAAAAAAAcAAAADAAIAAAAAAAcAAAADAAMAAAAAAAcAAAADAAQAAAAAAAcAAAADAAUAAAAAAAcAAAADAAYAAAAAAAcAAAADAAcAAAAAAAcAAAADAAgAAAAAAAcAAAADAAkAAAAAAAcAAAAEAAEAAAAAAAcAAAAEAAIAAAAAAAcAAAAEAAMAAAAAAAcAAAAEAAQAAAAAAAcAAAAEAAgAAAAAAAcAAAAEAAkAAAAAAAcAAAAFAAEAAAAAAAcAAAAFAAIAAAAAAAcAAAAFAAMAAAAAAAcAAAAFAAQAAAAAAAcAAAAFAAgAAAAAAAcAAAAFAAkAAAAAAAcAAAAGAAEAAAAAAAcAAAAGAAIAAAAAAAcAAAAGAAMAAAAAAAcAAAAGAAQAAAAAAAcAAAAGAAgAAAAAAAcAAAAGAAkAAAAAAAcAAAAHAAEAAAAAAAcAAAAHAAIAAAAAAAcAAAAHAAMAAAAAAAcAAAAHAAQAAAAAAAcAAAAHAAgAAAAAAAcAAAAHAAkAAAAAAAcAAAAIAAEAAAAAAAcAAAAIAAIAAAAAAAcAAAAIAAQAAAAAAAcAAAAIAAgAAAAAAAcAAAAIAAkAAAAAAAcAAAAJAAEAAAAAAAcAAAAJAAQAAAAAAAcAAAAJAAgAAAAAAAcAAAAJAAkAAAAAAAcAAAAKAAEAAAAAAAcAAAAKAAQAAAAAAAcAAAAKAAcAAAAAAAcAAAAKAAgAAAAAAAcAAAAKAAkAAAAAAAcAAAALAAEAAAAAAAcAAAALAAIAAAAAAAcAAAALAAMAAAAAAAcAAAALAAQAAAAAAAcAAAALAAUAAAAAAAcAAAALAAYAAAAAAAcAAAALAAcAAAAAAAcAAAALAAgAAAAAAAcAAAALAAkAAAAAAAcAAAAMAAEAAAAAAAcAAAAMAAIAAAAAAAcAAAAMAAMAAAAAAAcAAAAMAAQAAAAAAAcAAAAMAAUAAAAAAAcAAAAMAAYAAAAAAAcAAAAMAAcAAAAAAAcAAAAMAAgAAAAAAAcAAAAMAAkAAAAAAAcAAAANAAEAAAAAAAcAAAANAAIAAAAAAAcAAAANAAMAAAAAAAcAAAANAAQAAAAAAAcAAAANAAUAAAAAAAcAAAANAAYAAAAAAAcAAAANAAcAAAAAAAcAAAANAAgAAAAAAAcAAAANAAkAAAAAAAcAAAAOAAEAAAAAAAcAAAAOAAIAAAAAAAcAAAAOAAMAAAAAAAcAAAAOAAQAAAAAAAcAAAAOAAUAAAAAAAcAAAAOAAYAAAAAAAcAAAAOAAcAAAAAAAcAAAAOAAgAAAAAAAcAAAAOAAkAAAAAAAcAAAAPAAEAAAAAAAcAAAAPAAIAAAAAAAcAAAAPAAMAAAAAAAcAAAAPAAQAAAAAAAcAAAAPAAUAAAAAAAcAAAAPAAYAAAAAAAcAAAAPAAcAAAAAAAcAAAAPAAgAAAAAAAcAAAAPAAkAAAAAAAcAAAAQAAEAAAAAAAcAAAAQAAIAAAAAAAcAAAAQAAMAAAAAAAcAAAAQAAQAAAAAAAcAAAAQAAUAAAAAAAcAAAAQAAYAAAAAAAcAAAAQAAcAAAAAAAcAAAAQAAgAAAAAAAcAAAAQAAkAAAAAAAcAAAARAAEAAAAAAAcAAAARAAIAAAAAAAcAAAARAAMAAAAAAAcAAAARAAQAAAAAAAcAAAARAAUAAAAAAAcAAAARAAYAAAAAAAcAAAARAAcAAAAAAAcAAAARAAgAAAAAAAcAAAARAAkAAAAAAAcAAAASAAIAAAAAAAcAAAASAAMAAAAAAAcAAAASAAQAAAAAAAcAAAASAAUAAAAAAAcAAAASAAYAAAAAAAcAAAASAAcAAAAAAAcAAAASAAgAAAAAAAcAAAAKAAYAAAAAAAcAAAAKAAUAAAAAAAcAAAAJAAYAAAAAAAcAAAAJAAUAAAAAAAcAAAAIAAMAAAAAAAcAAAABAAoAAAAAAAcAAAABAAkAAAAAAAcAAAABAAEAAAAAAAcAAAABAAAAAAAAAAcAAAAAAAoAAAAAAAcAAAAAAAkAAAAAAAcAAAAAAAgAAAAAAAcAAAAAAAcAAAAAAAcAAAAAAAYAAAAAAAcAAAAAAAUAAAAAAAcAAAAAAAQAAAAAAAcAAAAAAAMAAAAAAAcAAAAAAAIAAAAAAAcAAAAAAAEAAAAAAAcAAAAAAAAAAAAAAAcAAAD//wEAAAAAAA8AAAD//wAAAAAAAA8AAAD/////AAAAABMAAAAAAP//AAACAA8AAAABAP//AAACAA8AAAD//wIAAAAAAA8AAAD//wMAAAAAAA8AAAD//wQAAAAAAA8AAAD//wUAAAAAAA8AAAD//wYAAAAAAA8AAAD//wcAAAAAAA8AAAD//wgAAAAAAA8AAAD//wkAAAAAAA8AAAD//woAAAAAAA8AAAABAAsAAAABAA4AAAAAAAsAAAABAA4AAAD//wsAAAADABMAAAACAAAAAAAAAAcAAAACAP//AAACAA8AAAACAAoAAAAAAAcAAAACAAsAAAABAA4AAAATAAAAAAAAAAcAAAASAAAAAAAAAAcAAAARAAAAAAAAAAcAAAAQAAAAAAAAAAcAAAAPAAAAAAAAAAcAAAAOAAAAAAAAAAcAAAANAAAAAAAAAAcAAAAMAAAAAAAAAAcAAAALAAAAAAAAAAcAAAAKAAAAAAAAAAcAAAAJAAAAAAAAAAcAAAAIAAAAAAAAAAcAAAAHAAAAAAAAAAcAAAAGAAAAAAAAAAcAAAAFAAAAAAAAAAcAAAAEAAAAAAAAAAcAAAADAAAAAAAAAAcAAAADAP//AAACAA8AAAAEAP//AAACAA8AAAAFAP//AAACAA8AAAAGAP//AAACAA8AAAAHAP//AAACAA8AAAAIAP//AAACAA8AAAAJAP//AAACAA8AAAAKAP//AAACAA8AAAALAP//AAACAA8AAAAMAP//AAACAA8AAAANAP//AAACAA8AAAAOAP//AAACAA8AAAAPAP//AAACAA8AAAAQAP//AAACAA8AAAARAP//AAACAA8AAAASAAEAAAAAAAcAAAASAP//AAACAA8AAAATAAEAAAAAAAcAAAATAP//AAACAA8AAAAUAAAAAAADAA4AAAAUAAEAAAADAA4AAAAUAP//AAABABMAAAATAAoAAAAAAAcAAAATAAkAAAAAAAcAAAATAAgAAAAAAAcAAAATAAcAAAAAAAcAAAATAAYAAAAAAAcAAAATAAUAAAAAAAcAAAATAAQAAAAAAAcAAAATAAMAAAAAAAcAAAATAAIAAAAAAAcAAAASAAoAAAAAAAcAAAASAAkAAAAAAAcAAAARAAoAAAAAAAcAAAATAAsAAAABAA4AAAASAAsAAAABAA4AAAARAAsAAAABAA4AAAAUAAIAAAADAA4AAAAUAAMAAAADAA4AAAAUAAQAAAADAA4AAAAUAAUAAAADAA4AAAAUAAYAAAADAA4AAAAUAAcAAAADAA4AAAAUAAgAAAADAA4AAAAUAAkAAAADAA4AAAAUAAoAAAADAA4AAAAUAAsAAAACABMAAAAQAAoAAAAAAAcAAAAPAAoAAAAAAAcAAAAOAAoAAAAAAAcAAAANAAoAAAAAAAcAAAAMAAoAAAAAAAcAAAALAAoAAAAAAAcAAAAKAAoAAAAAAAcAAAAJAAoAAAAAAAcAAAAIAAoAAAAAAAcAAAAHAAoAAAAAAAcAAAAGAAoAAAAAAAcAAAAFAAoAAAAAAAcAAAAEAAoAAAAAAAcAAAADAAoAAAAAAAcAAAADAAsAAAABAA4AAAAEAAsAAAABAA4AAAAFAAsAAAABAA4AAAAGAAsAAAABAA4AAAAHAAsAAAABAA4AAAAIAAsAAAABAA4AAAAJAAsAAAABAA4AAAAKAAsAAAABAA4AAAALAAsAAAABAA4AAAAMAAsAAAABAA4AAAANAAsAAAABAA4AAAAOAAsAAAABAA4AAAAPAAsAAAABAA4AAAAQAAsAAAABAA4AAAAJAAIAAAAAAAcAAAAKAAIAAAAAAAcAAAAJAAMAAAAAAAcAAAAKAAMAAAAAAAcAAAA=")
+tile_set = ExtResource("1_ebvsr")
+metadata/_edit_lock_ = true
+
+[node name="walls" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAAAAUAAAAAAAEAAAAAAAYAAAAAAAIAAAAAAAQAAAAAAAAAAAAEAAIAAAACAAMAAAACAAUAAAACAAQAAAADAAQAAAADAAQAAAADAAUAAAAAAAMAAAADAAYAAAABAAQAAAAEAAUAAAAAAAQAAAACAAIAAAABAAMAAAADAAIAAAACAAMAAAAGAAQAAAAAAAAAAAAGAAUAAAAAAAEAAAAGAAYAAAAAAAIAAAACAAgAAAABAAMAAAADAAgAAAACAAMAAAAEAAgAAAADAAMAAAAAAAIAAAADAAoAAAALAAQAAAABAAAAAAALAAYAAAABAAIAAAANAAQAAAAAAAQAAAANAAYAAAAAAAQAAAAOAAEAAAABAAMAAAAOAAIAAAABAAQAAAAOAAUAAAACAAQAAAAOAAgAAAADAAQAAAAOAAkAAAABAAMAAAAPAAQAAAADAAQAAAAPAAYAAAABAAQAAAARAAQAAAACAAQAAAARAAYAAAACAAQAAAALAAUAAAAAAAEAAAAMAAQAAAADAAMAAAAMAAYAAAADAAMAAAAPAAEAAAACAAMAAAAPAAUAAAAAAAMAAAAPAAkAAAACAAMAAAAQAAEAAAADAAIAAAAQAAIAAAABAAQAAAAQAAUAAAAAAAQAAAAQAAgAAAADAAQAAAAQAAkAAAADAAMAAAASAAQAAAABAAMAAAASAAYAAAABAAMAAAATAAQAAAADAAAAAAATAAUAAAAAAAEAAAATAAYAAAADAAIAAAAKAAYAAAACAAQAAAAHAAQAAAAAAAQAAAAIAAMAAAABAAMAAAAJAAMAAAADAAMAAAAIAAcAAAABAAMAAAAJAAcAAAADAAMAAAAIAAgAAAABAAQAAAAJAAIAAAADAAQAAAAEAAkAAAAAAAgAAAADAAkAAAABAAQAAAADAAoAAAADAAQAAAAEAAoAAAAAAAoAAAADAAEAAAADAAQAAAAEAAEAAAACAAsAAAAFAAIAAAADAAIAAAAFAAEAAAAAAAEAAAAFAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAPAAAAAAADAAQAAAA=")
+tile_set = ExtResource("1_ebvsr")
+metadata/_edit_lock_ = true
+
+[node name="w_blue5" parent="." instance=ExtResource("2_r03qf")]
+position = Vector2(40, 72)
+state = 1
+metadata/_edit_group_ = true
+
+[node name="blue3" parent="w_blue5" instance=ExtResource("2_r03qf")]
+type = 3
+state = 4
+dir = 2
+
+[node name="red" parent="w_blue5/blue3" instance=ExtResource("2_r03qf")]
+visible = false
+type = 1
+state = 4
+dir = 2
+
+[node name="w_blue11" parent="." instance=ExtResource("2_r03qf")]
+position = Vector2(24, 24)
+state = 1
+metadata/_edit_group_ = true
+
+[node name="blue3" parent="w_blue11" instance=ExtResource("2_r03qf")]
+type = 3
+state = 4
+dir = 2
+
+[node name="w_blue12" parent="." instance=ExtResource("2_r03qf")]
+position = Vector2(216, 8)
+state = 1
+metadata/_edit_group_ = true
+
+[node name="blue3" parent="w_blue12" instance=ExtResource("2_r03qf")]
+type = 3
+state = 4
+dir = 2
+
+[node name="w_blue6" parent="." instance=ExtResource("2_r03qf")]
+position = Vector2(72, 72)
+state = 1
+dir = 1
+metadata/_edit_group_ = true
+
+[node name="blue3" parent="w_blue6" instance=ExtResource("2_r03qf")]
+type = 3
+state = 4
+dir = 2
+
+[node name="red2" parent="w_blue6/blue3" instance=ExtResource("2_r03qf")]
+visible = false
+type = 1
+state = 4
+dir = 2
+
+[node name="w_blue7" parent="." instance=ExtResource("2_r03qf")]
+position = Vector2(72, 104)
+state = 1
+dir = 2
+metadata/_edit_group_ = true
+
+[node name="blue3" parent="w_blue7" instance=ExtResource("2_r03qf")]
+type = 3
+state = 4
+dir = 2
+
+[node name="red3" parent="w_blue7/blue3" instance=ExtResource("2_r03qf")]
+visible = false
+type = 1
+state = 4
+dir = 2
+
+[node name="w_blue9" parent="." instance=ExtResource("2_r03qf")]
+position = Vector2(24, 152)
+state = 1
+metadata/_edit_group_ = true
+
+[node name="blue3" parent="w_blue9" instance=ExtResource("2_r03qf")]
+type = 3
+state = 4
+dir = 2
+
+[node name="w_blue10" parent="." instance=ExtResource("2_r03qf")]
+position = Vector2(24, 168)
+state = 1
+metadata/_edit_group_ = true
+
+[node name="blue3" parent="w_blue10" instance=ExtResource("2_r03qf")]
+type = 3
+state = 4
+dir = 2
+
+[node name="w_blue8" parent="." instance=ExtResource("2_r03qf")]
+position = Vector2(40, 104)
+state = 1
+dir = 3
+metadata/_edit_group_ = true
+
+[node name="blue3" parent="w_blue8" instance=ExtResource("2_r03qf")]
+type = 3
+state = 4
+dir = 2
+
+[node name="red4" parent="w_blue8/blue3" instance=ExtResource("2_r03qf")]
+visible = false
+type = 1
+state = 4
+dir = 2
+
+[node name="w_red" parent="." instance=ExtResource("2_r03qf")]
+position = Vector2(248, 56)
+state = 1
+dir = 1
+metadata/_edit_group_ = true
+
+[node name="blue2" parent="w_red" instance=ExtResource("2_r03qf")]
+position = Vector2(2, 0)
+type = 2
+state = 4
+
+[node name="blue3" parent="w_red" instance=ExtResource("2_r03qf")]
+position = Vector2(-2, 0)
+type = 1
+state = 4
+dir = 2
+
+[node name="w_red3" parent="." instance=ExtResource("2_r03qf")]
+position = Vector2(120, 40)
+state = 1
+metadata/_edit_group_ = true
+
+[node name="blue2" parent="w_red3" instance=ExtResource("2_r03qf")]
+position = Vector2(0, -2)
+type = 2
+state = 4
+
+[node name="blue3" parent="w_red3" instance=ExtResource("2_r03qf")]
+position = Vector2(0, 2)
+type = 1
+state = 4
+dir = 2
+
+[node name="w_red4" parent="." instance=ExtResource("2_r03qf")]
+position = Vector2(168, 136)
+state = 1
+dir = 2
+metadata/_edit_group_ = true
+
+[node name="blue2" parent="w_red4" instance=ExtResource("2_r03qf")]
+position = Vector2(0, 2)
+type = 2
+state = 4
+
+[node name="blue3" parent="w_red4" instance=ExtResource("2_r03qf")]
+position = Vector2(0, -2)
+type = 1
+state = 4
+dir = 2
+
+[node name="w_red5" parent="." instance=ExtResource("2_r03qf")]
+position = Vector2(168, 72)
+state = 1
+dir = 1
+metadata/_edit_group_ = true
+
+[node name="blue2" parent="w_red5" instance=ExtResource("2_r03qf")]
+position = Vector2(2, 0)
+type = 2
+state = 4
+
+[node name="blue3" parent="w_red5" instance=ExtResource("2_r03qf")]
+position = Vector2(-2, 0)
+type = 1
+state = 4
+dir = 2
+
+[node name="w_red6" parent="." instance=ExtResource("2_r03qf")]
+position = Vector2(120, 104)
+state = 1
+dir = 3
+metadata/_edit_group_ = true
+
+[node name="blue2" parent="w_red6" instance=ExtResource("2_r03qf")]
+position = Vector2(-2, 0)
+type = 2
+state = 4
+
+[node name="blue3" parent="w_red6" instance=ExtResource("2_r03qf")]
+position = Vector2(2, 0)
+type = 1
+state = 4
+dir = 2
+
+[node name="w_green" parent="." instance=ExtResource("2_r03qf")]
+position = Vector2(248, 120)
+state = 1
+dir = 3
+metadata/_edit_group_ = true
+
+[node name="blue2" parent="w_green" instance=ExtResource("2_r03qf")]
+position = Vector2(-2, 0)
+type = 1
+state = 4
+dir = 2
+
+[node name="blue3" parent="w_green" instance=ExtResource("2_r03qf")]
+position = Vector2(2, 0)
+type = 2
+state = 4
+dir = 2
+
+[node name="w_blue4" parent="." instance=ExtResource("2_r03qf")]
+position = Vector2(200, 88)
+state = 1
+metadata/_edit_group_ = true
+
+[node name="blue2" parent="w_blue4" instance=ExtResource("2_r03qf")]
+position = Vector2(0, -2)
+type = 1
+state = 4
+dir = 2
+
+[node name="blue3" parent="w_blue4" instance=ExtResource("2_r03qf")]
+position = Vector2(0, 2)
+type = 3
+state = 4
+dir = 2
+
+[node name="w_red2" parent="." instance=ExtResource("2_r03qf")]
+position = Vector2(296, 88)
+state = 1
+dir = 2
+metadata/_edit_group_ = true
+
+[node name="blue2" parent="w_red2" instance=ExtResource("2_r03qf")]
+position = Vector2(0, 2)
+type = 2
+state = 4
+dir = 2
+
+[node name="blue3" parent="w_red2" instance=ExtResource("2_r03qf")]
+position = Vector2(0, -2)
+type = 1
+state = 4
+dir = 2

@@ -40,5 +40,5 @@ func apply_tick(world:World)->void:
   super(world)
   if state == State.OPEN:
     open = true
-  elif !world.get_next_cell(pos, self):
+  elif world.get_next_cells(pos, self).is_empty():
     open = false

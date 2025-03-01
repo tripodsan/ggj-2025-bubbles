@@ -74,6 +74,7 @@ animations = [{
 
 [node name="door" type="Node2D" groups=["cells", "doors"]]
 script = ExtResource("1_v6xrn")
+state = 12
 
 [node name="visual" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_4xadh")

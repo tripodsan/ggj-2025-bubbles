@@ -10,6 +10,7 @@ var levels = [
   preload("res://levels/level0_bounce.tscn"),
   preload("res://levels/level0_corners.tscn"),
   preload("res://levels/level0_sensors.tscn"),
+  preload("res://levels/level0_burst.tscn"),
   preload("res://levels/level1.tscn"),
   preload("res://levels/level2.tscn"),
   preload("res://levels/level3.tscn"),
