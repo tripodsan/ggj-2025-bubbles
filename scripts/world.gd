@@ -42,13 +42,18 @@ func _unhandled_input(event:InputEvent)->void:
   if event.is_action_pressed('move_left'):
     player_move(Global.DIR.LEFT)
   if event.is_action_pressed('shoot'):
-    shoot_bubble()
+    player_shoot()
   if event.is_action_pressed('wait'):
     tick()
 
 func player_move(dir:int):
   player.input_dir = dir
   tick()
+
+func player_shoot():
+  if player.can_shoot(self):
+    player.input_shoot = true
+    tick()
 
 func load_level(nr:int, scn:PackedScene):
   current_level_scn = scn
@@ -163,24 +168,6 @@ func get_color_type(pos:Vector2i)->StringName:
   var d:TileData = walls.get_cell_tile_data(pos)
   if !d: return &""
   return d.get_custom_data("color")
-
-func shoot_bubble()->void:
-  var pos = player.pos + Global.DIRS[player.dir]
-  var type:StringName = get_type(pos)
-  if type != &"" and type != &"spike" and type != &"corner": return
-  #if get_rock(pos): return
-  #if is_closed_door(pos): return
-
-  var b:Bubble = player.pop_bubble()
-  if b == null: return
-  cells.append(b)
-  b.visible = true
-  b.set_pos(pos)
-  b.set_dir(player.dir)
-  b.state = Bubble.State.MOVING
-  var s:Sensor = get_sensor(b.pos)
-  if s && (s.type == b.type || s.type == Sensor.Type.SENSOR_WHITE):
-    s.toggle()
 
 ## called when bubble is dispatch from its parent
 func dispatch_bubble(b:Bubble)->void:

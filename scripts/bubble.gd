@@ -154,8 +154,8 @@ func tick(world:World)->void:
 
 func tick_push(world:World, c:Cell)->bool:
   var ret:bool = super(world, c)
-  tick_stop()
   if ret:
+    tick_stop()
     next_dir = (dir + 2) % 4
     next_state = State.PUSHING
   return ret
@@ -210,6 +210,7 @@ func apply_tick(world):
   prints(name, next_state, next_pos)
   # don't call super, as we don't want to set_pos auto update
   var moved:bool = pos != next_pos && (next_state == State.MOVING || next_state == State.ABSORBING)
+  set_pos(pos)
   pos = next_pos
   set_dir(next_dir)
   set_state(next_state)
@@ -232,7 +233,7 @@ func tick_bounce(other:Cell)->void:
     other.processed = true
     if other.next_pos == next_pos:
       half_step = true
-  elif other && other.next_state == State.IDLE:
+  elif other is Bubble && other.next_state == State.IDLE:
     next_dir = (dir + 2) % 4
     next_state = State.PUSHING
     other.next_dir = dir

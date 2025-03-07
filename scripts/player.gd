@@ -12,6 +12,9 @@ var next_bubble:Bubble
 ## desired direction tp move
 var input_dir:int = -1
 
+## desire to shoot a bubble
+var input_shoot:bool = false
+
 func _ready():
   super()
   is_movable = false
@@ -23,11 +26,6 @@ func set_dir(v:int):
   super(v)
   visual.rotation_degrees = dir * 90
   visual.flip_v = dir != 0
-
-func pop_bubble()->Bubble:
-  var ret:Bubble = bubble
-  bubble = null
-  return ret
 
 func push_bubble(b:Bubble)->bool:
   if bubble == null:
@@ -43,20 +41,32 @@ func can_merge(other:Cell)->Cell:
   if !b or bubble: return null
   return self
 
+func can_shoot(world:World)->bool:
+  return bubble and not is_blocked(world, pos + Global.DIRS[dir])
+
 func tick_merge(other:Cell)->void:
   assert(other is Bubble)
   other.processed = true
   other.next_state = State.ENTERING
-  #other.visible = false
   next_bubble = other
 
 func tick_prepare(world:World)->void:
   super(world)
   next_bubble = null
+  if input_shoot && bubble:
+    # sanity check
+    if is_blocked(world, pos + Global.DIRS[dir]):
+      return
+    world.dispatch_bubble(bubble)
+    bubble.leave(pos)
+    bubble.set_dir(dir)
+    bubble.next_dir = dir
+    bubble.tick_prepare(world)
+    bubble = null
+    return
   if input_dir >= 0:
     next_state = State.MOVING
     next_dir = input_dir
-    input_dir = -1
 
 func apply_tick(world:World)->void:
   super(world)
@@ -66,4 +76,6 @@ func apply_tick(world:World)->void:
     bubble.visible = false
 
   # player only moves 1 tile
+  input_dir = -1
+  input_shoot = false
   state = State.IDLE
