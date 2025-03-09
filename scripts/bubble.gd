@@ -6,6 +6,13 @@ extends Cell
 
 enum Type { WHITE, RED, GREEN, BLUE }
 
+@export var colors:Array[Color] = [
+  Color.WHITE,
+  Color.RED,
+  Color.GREEN,
+  Color.BLUE
+]
+
 var YIELD_RULES:Array[Array] = [
   [0, 0, 2, 3],
   [0, 1, 1, 1],
@@ -13,34 +20,11 @@ var YIELD_RULES:Array[Array] = [
   [3, 1, 2, 3]
 ]
 
-var anim_names = [
-  "l_white",
-  "l_red",
-  "l_green",
-  "l_blue",
-  "s_white",
-  "s_red",
-  "s_green",
-  "s_blue"
-]
-
 var turn_names = [
-  "b_white_e",
-  "b_white_s",
-  "b_white_w",
-  "b_white_n",
-  "b_red_e",
-  "b_red_s",
-  "b_red_w",
-  "b_red_n",
-  "b_green_e",
-  "b_green_s",
-  "b_green_w",
-  "b_green_n",
-  "b_blue_e",
-  "b_blue_s",
-  "b_blue_w",
-  "b_blue_n",
+  "bounce_e",
+  "bounce_s",
+  "bounce_w",
+  "bounce_n",
 ]
 
 @export
@@ -86,20 +70,21 @@ func _process(_d)->void:
   if !_queue_update: return
   _queue_update = false
   if !visual: return
+  visual.modulate = colors[type]
   match state:
     State.IDLE, State.MOVING, State.ABSORBING:
-      visual.animation = anim_names[type]
+      visual.animation = "default"
       visual.stop()
     State.ENTERING:
-      visual.animation = anim_names[type + 4]
+      visual.animation = "small"
       visual.stop()
     State.BOUNCING, State.PUSHING, State.PULSING:
-      visual.play(turn_names[(dir + 2) % 4 + type * 4], 1.0 / Global.tick_speed)
+      visual.play(turn_names[(dir + 2) % 4], 1.0 / Global.tick_speed)
       # add hack for missing bouncing anim
       if half_step:
         visual.animation_finished.connect(reset_half, CONNECT_ONE_SHOT)
     State.BURSTING:
-      visual.play(anim_names[type])
+      visual.play("default")
   visual.position = -Global.DIRS[dir] * 8 if half_step else Vector2.ZERO
   recalc_sub()
 
@@ -241,7 +226,7 @@ func tick_bounce(other:Cell)->void:
     ##half_step = true
 
 func is_stationary()->bool:
-  return state != State.MOVING
+  return next_state != State.MOVING
 
 ## tests if can be merged with other bubble and return the resulting parent
 func can_merge(other:Cell)->Cell:
@@ -263,6 +248,7 @@ func can_merge(other:Cell)->Cell:
 func tick_merge(c:Cell)->void:
   assert(c is Bubble)
   next_state = State.ABSORBING
+  next_pos = pos
   c.processed = true
   c.next_state = State.ENTERING
   next_child = c

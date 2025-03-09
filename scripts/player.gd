@@ -42,7 +42,7 @@ func can_merge(other:Cell)->Cell:
   return self
 
 func can_shoot(world:World)->bool:
-  return bubble and not is_blocked(world, pos + Global.DIRS[dir])
+  return bubble and not bubble.is_blocked(world, pos + Global.DIRS[dir])
 
 func tick_merge(other:Cell)->void:
   assert(other is Bubble)
@@ -55,7 +55,7 @@ func tick_prepare(world:World)->void:
   next_bubble = null
   if input_shoot && bubble:
     # sanity check
-    if is_blocked(world, pos + Global.DIRS[dir]):
+    if bubble.is_blocked(world, pos + Global.DIRS[dir]):
       return
     world.dispatch_bubble(bubble)
     bubble.leave(pos)

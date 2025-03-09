@@ -23,6 +23,6 @@ func apply_tick(world:World)->void:
   if state == State.FALLING:
     tween = create_tween()
     tween.tween_property(self, 'scale', Vector2.ZERO, Global.tick_speed)
-  else:
+  elif state != State.REMOVED:
     # rock only moves 1 tile
     state = State.IDLE

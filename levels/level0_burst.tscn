@@ -33,6 +33,7 @@ state = 4
 dir = 2
 
 [node name="w_blue11" parent="." instance=ExtResource("2_r03qf")]
+visible = false
 position = Vector2(24, 24)
 state = 1
 metadata/_edit_group_ = true

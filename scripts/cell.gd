@@ -119,7 +119,7 @@ func is_blocked(world:World, pos:Vector2i)->BlockType:
   # special case for player that can walk into the goal
   if t == &"goal" and not self is Player: return BlockType.HARD
   # special case for player that it can't fall into abyss
-  if self is Player and not world.is_ground(pos): return BlockType.HARD
+  if self is Player and (not world.is_ground(pos) or t == &"spike"): return BlockType.HARD
   for c:Cell in world.get_next_cells(pos, self):
     if c && c.is_solid && !c.is_movable: return BlockType.HARD
   return BlockType.NONE

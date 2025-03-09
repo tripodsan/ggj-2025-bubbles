@@ -26,7 +26,7 @@ vertical = true
 [node name="Activator" type="Node" parent="door" node_paths=PackedStringArray("targets")]
 script = ExtResource("3_cwd2f")
 targets = [NodePath("../../sensor"), NodePath("../../sensor2")]
-metadata/_custom_type_script = ExtResource("3_cwd2f")
+metadata/_custom_type_script = "uid://cy81eovdfoexw"
 
 [node name="sensor" parent="." instance=ExtResource("3_6mid5")]
 position = Vector2(72, 104)
