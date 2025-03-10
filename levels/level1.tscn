@@ -24,7 +24,7 @@ position = Vector2(136, 72)
 [node name="Activator" type="Node" parent="door" node_paths=PackedStringArray("targets")]
 script = ExtResource("3_61w3m")
 targets = [NodePath("../../sensor")]
-metadata/_custom_type_script = ExtResource("3_61w3m")
+metadata/_custom_type_script = "uid://cy81eovdfoexw"
 
 [node name="sensor" parent="." instance=ExtResource("4_pdpul")]
 position = Vector2(152, 104)
