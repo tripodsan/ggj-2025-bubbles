@@ -38,6 +38,9 @@ var right:Bubble
 # special flag when 2 bubbles bounce over the same cell
 var half_step:bool = false
 
+# flag indicating that the bubble is entering
+var is_entering:bool = false
+
 var tween:Tween
 
 static func type_from_color(s:String)->Bubble.Type:
@@ -76,8 +79,12 @@ func _process(_d)->void:
       visual.animation = "default"
       visual.stop()
     State.ENTERING:
-      visual.animation = "small"
-      visual.stop()
+      if is_entering:
+        pass
+      else:
+        scale = Vector2.ONE
+        visual.animation = "small"
+        visual.stop()
     State.BOUNCING, State.PUSHING, State.PULSING:
       visual.play(turn_names[(dir + 2) % 4], 1.0 / Global.tick_speed)
       # add hack for missing bouncing anim
@@ -106,12 +113,12 @@ func get_num_children()->int:
 
 func recalc_sub()->void:
   if left == null: return
-  left.visible = state != State.ENTERING
+  left.visible = is_entering || state != State.ENTERING
   if right == null:
     # hide children if we are inside a bubble
     left.position = -Global.DIRS[dir] * 8 if half_step else Vector2.ZERO
   else:
-    right.visible = state != State.ENTERING
+    right.visible = is_entering || state != State.ENTERING
     left.position = -Global.DIRS[(dir + 1)%4] * 2 - (Global.DIRS[dir] * 8 if half_step else Vector2i.ZERO)
     right.position = Global.DIRS[(dir + 1)%4] * 2 - (Global.DIRS[dir] * 8 if half_step else Vector2i.ZERO)
 
@@ -194,19 +201,33 @@ func tick_burst(world:World)->void:
 func apply_tick(world):
   prints(name, next_state, next_pos)
   # don't call super, as we don't want to set_pos auto update
-  var moved:bool = pos != next_pos && (next_state == State.MOVING || next_state == State.ABSORBING)
+  var dx:Vector2i = next_pos - pos
+  var moved:bool = dx != Vector2i.ZERO && (next_state == State.MOVING || next_state == State.ABSORBING)
+  is_entering = next_state == State.ENTERING && next_state != state
   set_pos(pos)
   pos = next_pos
   set_dir(next_dir)
   set_state(next_state)
-  if tween: tween.stop()
+  if tween:
+    tween.stop()
+    tween = null
   if moved:
     tween = create_tween()
     tween.tween_property(self, 'position', Global.grid2cart(pos), Global.tick_speed)
+  if is_entering:
+    tween = create_tween()
+    tween.tween_property(self, 'scale', Vector2(0.5, 0.5), Global.tick_speed).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+    tween.parallel().tween_property(self, 'position', Vector2(0, 0), Global.tick_speed).from((dx * -8) as Vector2).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+    tween.finished.connect(_on_entering_end, CONNECT_ONE_SHOT)
+
   if state == State.ABSORBING:
     _absorb()
   else:
     _queue_update = true
+
+func _on_entering_end()->void:
+  is_entering = false
+  _queue_update = true
 
 ## sets the next direction and state to make the bubble turn
 func tick_bounce(other:Cell)->void:
@@ -251,6 +272,7 @@ func tick_merge(c:Cell)->void:
   next_pos = pos
   c.processed = true
   c.next_state = State.ENTERING
+  c.next_pos = next_pos
   next_child = c
   if is_stationary():
     next_dir = c.dir
