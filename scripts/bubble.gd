@@ -123,14 +123,15 @@ func recalc_sub()->void:
     right.position = Global.DIRS[(dir + 1)%4] * 2 - (Global.DIRS[dir] * 8 if half_step else Vector2i.ZERO)
 
 func tick_prepare(world:World)->void:
-  if state == State.BOUNCING || state == State.ABSORBING:
+  var was_bouncing = state == State.BOUNCING
+  if was_bouncing || state == State.ABSORBING:
     state = State.MOVING
   super(world)
   next_child = null
   half_step = false
 
   # check if bubble is on a spike
-  if (state != State.BURSTING) && world.get_type(pos) == &"spike":
+  if (state != State.BURSTING && !was_bouncing) && world.get_type(pos) == &"spike":
     next_state = Bubble.State.BURSTING
     processed = true
 
@@ -185,16 +186,16 @@ func tick_burst(world:World)->void:
       r.dir = (dir + 1) % 4
       r.next_dir = r.dir
     else:
-      if (tick_dir + dir) % 4 < 2:
-        l.dir = dir
-        l.next_dir = l.dir
-        r.dir = tick_dir
-        r.next_dir = r.dir
-      else:
+      if (tick_dir + 1) % 4 == dir:
         r.dir = dir
         r.next_dir = r.dir
         l.dir = tick_dir
         l.next_dir = l.dir
+      else:
+        l.dir = dir
+        l.next_dir = l.dir
+        r.dir = tick_dir
+        r.next_dir = r.dir
     l.tick_move(world)
     r.tick_move(world)
 
