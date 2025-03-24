@@ -19,6 +19,8 @@ var time:float = 0
 
 var ticks:int = 0
 
+var tick_pending:bool = false
+
 var corner_matrix = [
   [1, 1, 2, 2],
   [3, 2, 2, 3],
@@ -29,7 +31,7 @@ var corner_matrix = [
 var current_level_scn:PackedScene
 
 func _ready():
-  pass
+  tick_pending = false
   #init_level()
 
 func _unhandled_input(event:InputEvent)->void:
@@ -44,16 +46,21 @@ func _unhandled_input(event:InputEvent)->void:
   if event.is_action_pressed('shoot'):
     player_shoot()
   if event.is_action_pressed('wait'):
-    tick()
+    force_tick()
+
+func force_tick():
+  pass
+  #tick()
 
 func player_move(dir:int):
-  player.input_dir = dir
-  tick()
+  if not player.try_move(self, dir):
+    player.input_dir = dir
+    force_tick()
 
 func player_shoot():
   if player.can_shoot(self):
     player.input_shoot = true
-    tick()
+    force_tick()
 
 func load_level(nr:int, scn:PackedScene):
   current_level_scn = scn
@@ -71,7 +78,7 @@ func _process(delta:float)->void:
   time += delta
   if time < Global.tick_speed: return
   time -= Global.tick_speed
-  #tick()
+  tick()
 
 func tick():
   ticks += 1

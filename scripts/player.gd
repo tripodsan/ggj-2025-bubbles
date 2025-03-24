@@ -36,6 +36,25 @@ func push_bubble(b:Bubble)->bool:
 func reset():
   bubble = null
 
+## tries if the player can immediately move to the new location, speeding
+## up the gameplay
+func try_move(world:World, dir:int)->bool:
+  if state != State.IDLE:
+    return false
+  if next_bubble:
+    return false
+  next_pos = pos + Global.DIRS[dir]
+  var bt:BlockType = is_blocked(world, next_pos)
+  if bt:
+    return false
+  var cells:Array[Cell] = world.get_next_cells(next_pos, self)
+  if cells.size() > 0:
+    return false
+  next_state = State.MOVING
+  next_dir = dir
+  apply_tick(world)
+  return true
+
 func can_merge(other:Cell)->Cell:
   var b:Bubble = other as Bubble
   if !b or bubble: return null
